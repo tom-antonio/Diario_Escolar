@@ -1,12 +1,14 @@
 package view;
 
 import dao.DaoAluno;
+import dao.DaoDisciplina;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import model.Aluno;
+import model.Disciplina;
 import model.Nota;
 
 public class FormDiario extends JFrame {
@@ -26,10 +28,12 @@ public class FormDiario extends JFrame {
     private JButton btnPesquisar;
     private List<Nota> notas;
     private DaoAluno daoAluno;
+    private DaoDisciplina daoDisciplina;
 
     public FormDiario() {
         notas = new ArrayList<>();
         daoAluno = new DaoAluno();
+        daoDisciplina = new DaoDisciplina();
         setTitle("Diário de Notas");
         setSize(700, 600);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -37,6 +41,7 @@ public class FormDiario extends JFrame {
 
         inicializarComponentes();
         carregarAlunos();
+        carregarDisciplinas();
         setVisible(true);
     }
 
@@ -104,9 +109,7 @@ public class FormDiario extends JFrame {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1;
 
-        DefaultComboBoxModel<String> modelDisciplina = new DefaultComboBoxModel<>();
-        modelDisciplina.addElement("Selecione uma Disciplina");
-        cmbDisciplina = new JComboBox<>(modelDisciplina);
+        cmbDisciplina = new JComboBox<>();
         painelPrincipal.add(cmbDisciplina, gbc);
 
         //Tabela de Notas
@@ -259,6 +262,15 @@ public class FormDiario extends JFrame {
         cmbAluno.addItem("Selecione um Aluno");
         for (Aluno aluno : alunos) {
             cmbAluno.addItem(aluno.getNome());
+        }
+    }
+
+    private void carregarDisciplinas() {
+        List<Disciplina> disciplinas = daoDisciplina.listarTodos();
+        cmbDisciplina.removeAllItems();
+        cmbDisciplina.addItem("Selecione uma disciplina");
+        for (Disciplina disciplina : disciplinas) {
+            cmbDisciplina.addItem(disciplina.getNome_disciplina());
         }
     }
 }
