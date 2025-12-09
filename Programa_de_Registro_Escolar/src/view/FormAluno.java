@@ -20,6 +20,7 @@ public class FormAluno extends JFrame {
     private AlunoController alunoController;
 
     public FormAluno() {
+        alunoController = new AlunoController(this);
         setTitle("Cadastro de Aluno");
         setSize(400, 350);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -136,18 +137,26 @@ public class FormAluno extends JFrame {
         btnPesquisar = new JButton("Pesquisar");
 
         btnSalvar.addActionListener(e -> {
+            String nome = txtNome.getText().trim();
+            String endereco = txtEndereco.getText().trim();
+            String telefone = txtTelefone.getText().trim();
+            String email = txtEmail.getText().trim();
             String matricula = txtMatricula.getText().trim();
-            
-            if (validarMatricula(matricula)) {
-                JOptionPane.showMessageDialog(this, 
-                    "Matrícula válida! Dados salvos com sucesso.", 
-                    "Sucesso", 
-                    JOptionPane.INFORMATION_MESSAGE);
+            String nomePai = txtNome_pai.getText().trim();
+            String nomeMae = txtNome_mae.getText().trim();
+
+            String erro = alunoController.salvarAluno(nome, endereco, telefone, email, matricula, nomePai, nomeMae);
+
+            if (erro == null) {
+                JOptionPane.showMessageDialog(this,
+                        "Aluno salvo com sucesso!",
+                        "Sucesso",
+                        JOptionPane.INFORMATION_MESSAGE);
             } else {
-                JOptionPane.showMessageDialog(this, 
-                    "Matrícula inválida! A matrícula deve conter exatamente 10 dígitos numéricos.", 
-                    "Erro de Validação", 
-                    JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this,
+                        erro,
+                        "Erro de Validação",
+                        JOptionPane.ERROR_MESSAGE);
             }
         });
         btnAlterar.addActionListener(e -> {
@@ -174,11 +183,4 @@ public class FormAluno extends JFrame {
         add(painelPrincipal);
     }
 
-    //Metodo que chama o AlunoController para validar a matrícula
-    private boolean validarMatricula(String matricula) {
-        if (alunoController == null) {
-            alunoController = new AlunoController(this);
-        }
-        return alunoController.validarMatricula(matricula);
-    }
 }

@@ -137,7 +137,7 @@ public class FormDiario extends JFrame {
         gbc.weightx = 0;
         gbc.weighty = 0;
 
-        JButton btnAdicionarNota = new JButton("Adicionar Nota");
+        btnAdicionarNota = new JButton("Adicionar Nota");
         btnAdicionarNota.setPreferredSize(new Dimension(200, 40));
         btnAdicionarNota.setFont(new Font("Arial", Font.BOLD, 12));
         btnAdicionarNota.setBackground(new Color(70, 130, 180));
@@ -147,9 +147,9 @@ public class FormDiario extends JFrame {
         btnAdicionarNota.setOpaque(true);
         btnAdicionarNota.setContentAreaFilled(true);
         btnAdicionarNota.setBorderPainted(false);
-        btnAdicionarNota.addActionListener(e -> new FormAdicionarNota());
+        btnAdicionarNota.addActionListener(e -> new FormAdicionarNota(this));
 
-        JButton btnRemoverNota = new JButton("Remover Nota");
+        btnRemoverNota = new JButton("Remover Nota");
         btnRemoverNota.setPreferredSize(new Dimension(200, 40));
         btnRemoverNota.setFont(new Font("Arial", Font.BOLD, 12));
         btnRemoverNota.setBackground(new Color(220, 20, 160));
@@ -223,6 +223,23 @@ public class FormDiario extends JFrame {
         painelPrincipal.add(painelBotoes, gbc);
         
         add(painelPrincipal);
+    }
+
+    public void adicionarNotaNaTabela(String nota) {
+        if (nota == null || nota.trim().isEmpty()) {
+            return;
+        }
+
+        int novaColuna = modeloTabela.getColumnCount();
+        String tituloColuna = "Nota " + (novaColuna + 1);
+        modeloTabela.addColumn(tituloColuna);
+
+        // Garante que há pelo menos uma linha
+        if (modeloTabela.getRowCount() == 0) {
+            modeloTabela.addRow(new Object[]{nota});
+        } else {
+            modeloTabela.setValueAt(nota, 0, novaColuna);
+        }
     }
 
     private void atualizarTextoStatus() {

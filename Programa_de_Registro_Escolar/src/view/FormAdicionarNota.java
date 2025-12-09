@@ -8,8 +8,10 @@ public class FormAdicionarNota extends JFrame {
     private JComboBox<String> cmbNotas;
     private JButton btnSalvar;
     private JButton btnCancelar;
+    private FormDiario formDiario;
 
-    public FormAdicionarNota() {
+    public FormAdicionarNota(FormDiario formDiario) {
+        this.formDiario = formDiario;
         setTitle("Adicionar Nota");
         setSize(400, 150);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -45,7 +47,7 @@ public class FormAdicionarNota extends JFrame {
         painelPrincipal.add(cmbNotas, gbc);
 
         // Painel de botões
-        JPanel painelBotoes = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        JPanel painelBotoes = new JPanel(new FlowLayout(FlowLayout.CENTER));
 
         btnSalvar = new JButton("Salvar");
         btnCancelar = new JButton("Cancelar");
@@ -68,7 +70,15 @@ public class FormAdicionarNota extends JFrame {
 
     private void salvar() {
         String notaSelecionada = (String) cmbNotas.getSelectedItem();
-        System.out.println("Nota selecionada: " + notaSelecionada);
+        if (notaSelecionada == null || notaSelecionada.startsWith("Selecione")) {
+            JOptionPane.showMessageDialog(this, "Selecione uma nota.", "Aviso", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        if (formDiario != null) {
+            formDiario.adicionarNotaNaTabela(notaSelecionada);
+        }
+
         dispose();
     }
 
