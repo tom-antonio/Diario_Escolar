@@ -33,7 +33,7 @@ public class FormNota extends JFrame {
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.NONE;
         gbc.weightx = 0;
-        painelPrincipal.add(new JLabel("Turma:"), gbc);
+        painelPrincipal.add(new JLabel("Nota:"), gbc);
 
         gbc.gridx = 1;
         gbc.fill = GridBagConstraints.HORIZONTAL;

@@ -1,4 +1,5 @@
 package model;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Diario {
@@ -9,20 +10,21 @@ public class Diario {
     private List<Disciplina> disciplina;
     private List<Periodo> periodo;
     private List<Turma> turma;
-    private Nota nota;
+    private final List<Nota> notas;  // Composição: Notas pertencem exclusivamente ao Diário
 
     public Diario() {
+        this.notas = new ArrayList<>();  // Diário cria suas próprias notas
     }
 
     public Diario(int id, boolean status, List<Aluno> aluno, List<Disciplina> disciplina, List<Periodo> periodo,
-            List<Turma> turma, Nota nota) {
+            List<Turma> turma) {
         this.id = id;
         this.status = status;
         this.aluno = aluno;
         this.disciplina = disciplina;
         this.periodo = periodo;
         this.turma = turma;
-        this.nota = nota;
+        this.notas = new ArrayList<>();  // Diário cria suas próprias notas
     }
 
     public int getId() {
@@ -73,11 +75,14 @@ public class Diario {
         this.turma = turma;
     }
 
-    public Nota getNota() {
-        return nota;
+    public List<Nota> getNotas() {
+        return notas;
     }
 
-    public void setNota(Nota nota) {
-        this.nota = nota;
+    public void setNotas(List<Nota> notas) {
+        if (notas != null) {
+            this.notas.clear();
+            this.notas.addAll(notas);
+        }
     }
 }

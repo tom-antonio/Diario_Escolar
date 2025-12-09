@@ -181,6 +181,4 @@ public class FormAluno extends JFrame {
         }
         return alunoController.validarMatricula(matricula);
     }
-
-    private boolean validarPessoa() {}
 }

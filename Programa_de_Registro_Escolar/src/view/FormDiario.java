@@ -1,7 +1,11 @@
 package view;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import model.Nota;
 
 public class FormDiario extends JFrame {
 
@@ -10,15 +14,20 @@ public class FormDiario extends JFrame {
     private JComboBox<String> cmbPeriodo;
     private JComboBox<String> cmbTurma;
     private JComboBox<String> cmbDisciplina;
-    private JComboBox<String> cmbNota;
+    private JTable tabelaNotas;
+    private DefaultTableModel modeloTabela;
+    private JButton btnAdicionarNota;
+    private JButton btnRemoverNota;
     private JButton btnSalvar;
     private JButton btnAlterar;
     private JButton btnExcluir;
     private JButton btnPesquisar;
+    private List<Nota> notas;
 
     public FormDiario() {
+        notas = new ArrayList<>();
         setTitle("Diário de Notas");
-        setSize(400, 350);
+        setSize(700, 600);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
 
@@ -97,25 +106,75 @@ public class FormDiario extends JFrame {
         cmbDisciplina = new JComboBox<>(modelDisciplina);
         painelPrincipal.add(cmbDisciplina, gbc);
 
-        //Campo Nota
+        //Tabela de Notas
         gbc.gridx = 0;
         gbc.gridy = 5;
-        gbc.fill = GridBagConstraints.NONE;
-        gbc.weightx = 0;
-        painelPrincipal.add(new JLabel("Nota:"), gbc);
-
-        gbc.gridx = 1;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridwidth = 2;
+        gbc.fill = GridBagConstraints.BOTH;
         gbc.weightx = 1;
+        gbc.weighty = 1;
+        
+        modeloTabela = new DefaultTableModel(new Object[][]{{}}, new Object[]{}) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+        
+        tabelaNotas = new JTable(modeloTabela);
+        tabelaNotas.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        tabelaNotas.setRowHeight(30);
+        
+        JScrollPane scrollPane = new JScrollPane(tabelaNotas);
+        scrollPane.setPreferredSize(new Dimension(600, 80));
+        painelPrincipal.add(scrollPane, gbc);
 
-        DefaultComboBoxModel<String> modelNota = new DefaultComboBoxModel<>();
-        modelNota.addElement("Selecione uma Nota");
-        cmbNota = new JComboBox<>(modelNota);
-        painelPrincipal.add(cmbNota, gbc);
+        //Botões de gerenciamento de notas
+        gbc.gridx = 0;
+        gbc.gridy = 6;
+        gbc.gridwidth = 2;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 0;
+        gbc.weighty = 0;
+
+        JButton btnAdicionarNota = new JButton("Adicionar Nota");
+        btnAdicionarNota.setPreferredSize(new Dimension(200, 40));
+        btnAdicionarNota.setFont(new Font("Arial", Font.BOLD, 12));
+        btnAdicionarNota.setBackground(new Color(70, 130, 180));
+        btnAdicionarNota.setForeground(Color.WHITE);
+        btnAdicionarNota.setFocusPainted(false);
+        //tornar o botão opaco e forçar a pintura do fundo
+        btnAdicionarNota.setOpaque(true);
+        btnAdicionarNota.setContentAreaFilled(true);
+        btnAdicionarNota.setBorderPainted(false);
+        btnAdicionarNota.addActionListener(e -> new FormAdicionarNota());
+
+        JButton btnRemoverNota = new JButton("Remover Nota");
+        btnRemoverNota.setPreferredSize(new Dimension(200, 40));
+        btnRemoverNota.setFont(new Font("Arial", Font.BOLD, 12));
+        btnRemoverNota.setBackground(new Color(220, 20, 160));
+        btnRemoverNota.setForeground(Color.WHITE);
+        btnRemoverNota.setFocusPainted(false);
+        //tornar o botão opaco e forçar a pintura do fundo
+        btnRemoverNota.setOpaque(true);
+        btnRemoverNota.setContentAreaFilled(true);
+        btnRemoverNota.setBorderPainted(false);
+
+        JPanel painelBotoesNotas = new JPanel(new FlowLayout());
+        painelBotoesNotas.add(btnAdicionarNota);
+        painelBotoesNotas.add(btnRemoverNota);
+
+        gbc.gridx = 0;
+        gbc.gridy = 7;
+        gbc.gridwidth = 2;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        painelPrincipal.add(painelBotoesNotas, gbc);
 
         //Campo Status
         gbc.gridx = 0;
-        gbc.gridy = 6;
+        gbc.gridy = 8;
+        gbc.gridwidth = 1;
+        gbc.weighty = 0;
         gbc.fill = GridBagConstraints.NONE;
         gbc.weightx = 0;
         painelPrincipal.add(new JLabel("Status:"), gbc);
@@ -158,7 +217,7 @@ public class FormDiario extends JFrame {
         painelBotoes.add(btnPesquisar);
 
         gbc.gridx = 0;
-        gbc.gridy = 10;
+        gbc.gridy = 9;
         gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         painelPrincipal.add(painelBotoes, gbc);
