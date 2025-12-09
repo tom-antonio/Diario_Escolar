@@ -1,5 +1,6 @@
 package view;
 
+import controller.AlunoController;
 import java.awt.*;
 import javax.swing.*;
 
@@ -16,6 +17,7 @@ public class FormAluno extends JFrame {
     private JButton btnAlterar;
     private JButton btnExcluir;
     private JButton btnPesquisar;
+    private AlunoController alunoController;
 
     public FormAluno() {
         setTitle("Cadastro de Aluno");
@@ -134,7 +136,19 @@ public class FormAluno extends JFrame {
         btnPesquisar = new JButton("Pesquisar");
 
         btnSalvar.addActionListener(e -> {
-        
+            String matricula = txtMatricula.getText().trim();
+            
+            if (validarMatricula(matricula)) {
+                JOptionPane.showMessageDialog(this, 
+                    "Matrícula válida! Dados salvos com sucesso.", 
+                    "Sucesso", 
+                    JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, 
+                    "Matrícula inválida! A matrícula deve conter exatamente 10 dígitos numéricos.", 
+                    "Erro de Validação", 
+                    JOptionPane.ERROR_MESSAGE);
+            }
         });
         btnAlterar.addActionListener(e -> {
         
@@ -159,4 +173,14 @@ public class FormAluno extends JFrame {
         
         add(painelPrincipal);
     }
+
+    //Metodo que chama o AlunoController para validar a matrícula
+    private boolean validarMatricula(String matricula) {
+        if (alunoController == null) {
+            alunoController = new AlunoController(this);
+        }
+        return alunoController.validarMatricula(matricula);
+    }
+
+    private boolean validarPessoa() {}
 }

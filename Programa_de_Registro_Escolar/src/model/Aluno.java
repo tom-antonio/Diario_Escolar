@@ -2,7 +2,7 @@ package model;
 
 public class Aluno extends Pessoa {
 
-    private int matricula;
+    private long matricula;
     private String nome_pai;
     private String nome_mae;
 
@@ -10,18 +10,18 @@ public class Aluno extends Pessoa {
         super();
     }
 
-    public Aluno(int id, String nome, String endereco, String telefone, String email, int matricula, String nome_pai, String nome_mae) {
+    public Aluno(int id, String nome, String endereco, String telefone, String email, long matricula, String nome_pai, String nome_mae) {
         super(id, nome, endereco, telefone, email);
         this.matricula = matricula;
         this.nome_pai = nome_pai;
         this.nome_mae = nome_mae;
     }
 
-    public int getMatricula() {
+    public long getMatricula() {
         return matricula;
     }
 
-    public void setMatricula(int matricula) {
+    public void setMatricula(long matricula) {
         this.matricula = matricula;
     }
 
