@@ -1,19 +1,17 @@
 package model;
-import java.util.List;
 
 public class Disciplina {
 
     private int id;
     private String nome_disciplina;
-    private List<Professor> professor;
+    private int id_professor;
 
     public Disciplina() {
     }
 
-    public Disciplina(int id, String nome_disciplina, List<Professor> professor) {
-        this.id = id;
+    public Disciplina(String nome_disciplina, int id_professor) {
         this.nome_disciplina = nome_disciplina;
-        this.professor = professor;
+        this.id_professor = id_professor;
     }
 
     public int getId() {
@@ -32,12 +30,11 @@ public class Disciplina {
         this.nome_disciplina = nome_disciplina;
     }
 
-    public List<Professor> getProfessor() {
-        return professor;
+    public int getId_professor() {
+        return id_professor;
     }
 
-    public void setProfessor(List<Professor> professor) {
-        this.professor = professor;
+    public void setId_professor(int id_professor) {
+        this.id_professor = id_professor;
     }
-
 }

@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import model.Aluno;
 
 public class DaoAluno {
@@ -36,5 +38,36 @@ public class DaoAluno {
 			System.out.println("Erro ao salvar aluno: " + e.getMessage());
 		}
 		return false;
+	}
+
+	public List<Aluno> listarTodos() {
+		List<Aluno> alunos = new ArrayList<>();
+		String sql = "SELECT id, nome, endereco, telefone, email, matricula, nome_pai, nome_mae FROM taluno ORDER BY nome";
+
+		try (Connection conn = Postgres.conectar();
+			 PreparedStatement ps = conn != null ? conn.prepareStatement(sql) : null) {
+
+			if (ps == null) {
+				return alunos;
+			}
+
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				Aluno aluno = new Aluno(
+					rs.getInt("id"),
+					rs.getString("nome"),
+					rs.getString("endereco"),
+					rs.getString("telefone"),
+					rs.getString("email"),
+					rs.getLong("matricula"),
+					rs.getString("nome_pai"),
+					rs.getString("nome_mae")
+				);
+				alunos.add(aluno);
+			}
+		} catch (SQLException e) {
+			System.out.println("Erro ao listar alunos: " + e.getMessage());
+		}
+		return alunos;
 	}
 }

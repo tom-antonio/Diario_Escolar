@@ -3,22 +3,22 @@ package model;
 
 public class Professor extends Pessoa {
 
-    private String matricula;
+    private long matricula;
 
     public Professor() {
         super();
     }
 
-    public Professor(int id, String nome, String endereco, String telefone, String email, String matricula) {
+    public Professor(int id, String nome, String endereco, String telefone, String email, long matricula) {
         super(id, nome, endereco, telefone, email);
         this.matricula = matricula;
     }
 
-    public String getMatricula() {
+    public long getMatricula() {
         return matricula;
     }
 
-    public void setMatricula(String matricula) {
+    public void setMatricula(long matricula) {
         this.matricula = matricula;
     }
 }

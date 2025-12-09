@@ -1,10 +1,12 @@
 package view;
 
+import dao.DaoAluno;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import model.Aluno;
 import model.Nota;
 
 public class FormDiario extends JFrame {
@@ -23,15 +25,18 @@ public class FormDiario extends JFrame {
     private JButton btnExcluir;
     private JButton btnPesquisar;
     private List<Nota> notas;
+    private DaoAluno daoAluno;
 
     public FormDiario() {
         notas = new ArrayList<>();
+        daoAluno = new DaoAluno();
         setTitle("Diário de Notas");
         setSize(700, 600);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
 
         inicializarComponentes();
+        carregarAlunos();
         setVisible(true);
     }
 
@@ -53,9 +58,7 @@ public class FormDiario extends JFrame {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1;
 
-        DefaultComboBoxModel<String> modelAluno = new DefaultComboBoxModel<>();
-        modelAluno.addElement("Selecione um Aluno");
-        cmbAluno = new JComboBox<>(modelAluno);
+        cmbAluno = new JComboBox<>();
         painelPrincipal.add(cmbAluno, gbc);
 
         //Campo Período
@@ -247,6 +250,15 @@ public class FormDiario extends JFrame {
             togStatus.setText("Aprovado");
         } else {
             togStatus.setText("Reprovado");
+        }
+    }
+
+    private void carregarAlunos() {
+        List<Aluno> alunos = daoAluno.listarTodos();
+        cmbAluno.removeAllItems();
+        cmbAluno.addItem("Selecione um Aluno");
+        for (Aluno aluno : alunos) {
+            cmbAluno.addItem(aluno.getNome());
         }
     }
 }

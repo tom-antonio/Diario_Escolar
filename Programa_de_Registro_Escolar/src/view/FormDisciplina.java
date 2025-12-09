@@ -1,7 +1,13 @@
 package view;
 
+import controller.DisciplinaController;
+import dao.DaoProfessor;
 import java.awt.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import javax.swing.*;
+import model.Professor;
 
 public class FormDisciplina extends JFrame {
 
@@ -11,14 +17,21 @@ public class FormDisciplina extends JFrame {
     private JButton btnAlterar;
     private JButton btnExcluir;
     private JButton btnPesquisar;
+    private DaoProfessor daoProfessor;
+    private DisciplinaController disciplinaController;
+    private Map<String, Integer> professoresMap;
 
     public FormDisciplina() {
+        disciplinaController = new DisciplinaController(this);
+        daoProfessor = new DaoProfessor();
+        professoresMap = new HashMap<>();
         setTitle("Cadastro de Disciplina");
         setSize(400, 200);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
 
         inicializarComponentes();
+        carregarProfessor();
         setVisible(true);
     }
 
@@ -53,9 +66,7 @@ public class FormDisciplina extends JFrame {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1;
 
-        DefaultComboBoxModel<String> modelProfessores = new DefaultComboBoxModel<>();
-        modelProfessores.addElement("Selecione um Professor");
-        cmbProfessor = new JComboBox<>(modelProfessores);
+        cmbProfessor = new JComboBox<>();
         painelPrincipal.add(cmbProfessor, gbc);
 
 
@@ -68,7 +79,24 @@ public class FormDisciplina extends JFrame {
         btnPesquisar = new JButton("Pesquisar");
 
         btnSalvar.addActionListener(e -> {
-        
+            String nomeDisciplina = txtNome_disciplina.getText().trim();
+            String nomeProfessor = (String) cmbProfessor.getSelectedItem();
+            int idProfessor = professoresMap.getOrDefault(nomeProfessor, -1);
+
+            String erro = disciplinaController.salvarDisciplina(nomeDisciplina, nomeProfessor, idProfessor);
+
+            if (erro == null) {
+                JOptionPane.showMessageDialog(this,
+                        "Disciplina salva com sucesso!",
+                        "Sucesso",
+                        JOptionPane.INFORMATION_MESSAGE);
+                limparCampos();
+            } else {
+                JOptionPane.showMessageDialog(this,
+                        erro,
+                        "Erro de Validação",
+                        JOptionPane.ERROR_MESSAGE);
+            }
         });
         btnAlterar.addActionListener(e -> {
         
@@ -92,5 +120,22 @@ public class FormDisciplina extends JFrame {
         painelPrincipal.add(painelBotoes, gbc);
         
         add(painelPrincipal);
+    }
+
+    private void carregarProfessor() {
+        List<Professor> professores = daoProfessor.listarTodos();
+        cmbProfessor.removeAllItems();
+        professoresMap.clear();
+        cmbProfessor.addItem("Selecione um Professor");
+        for (Professor professor : professores) {
+            cmbProfessor.addItem(professor.getNome());
+            professoresMap.put(professor.getNome(), professor.getId());
+        }
+    }
+
+    private void limparCampos() {
+        txtNome_disciplina.setText("");
+        cmbProfessor.setSelectedIndex(0);
+        txtNome_disciplina.requestFocus();
     }
 }

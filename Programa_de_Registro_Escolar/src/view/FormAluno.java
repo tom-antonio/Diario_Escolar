@@ -152,6 +152,7 @@ public class FormAluno extends JFrame {
                         "Aluno salvo com sucesso!",
                         "Sucesso",
                         JOptionPane.INFORMATION_MESSAGE);
+                limparCampos();
             } else {
                 JOptionPane.showMessageDialog(this,
                         erro,
@@ -181,6 +182,17 @@ public class FormAluno extends JFrame {
         painelPrincipal.add(painelBotoes, gbc);
         
         add(painelPrincipal);
+    }
+
+    private void limparCampos() {
+        txtNome.setText("");
+        txtEndereco.setText("");
+        txtTelefone.setText("");
+        txtEmail.setText("");
+        txtMatricula.setText("");
+        txtNome_pai.setText("");
+        txtNome_mae.setText("");
+        txtNome.requestFocus();
     }
 
 }

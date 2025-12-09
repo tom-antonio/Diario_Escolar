@@ -1,5 +1,6 @@
 package view;
 
+import controller.ProfessorController;
 import java.awt.*;
 import javax.swing.*;
 
@@ -14,8 +15,10 @@ public class FormProfessor extends JFrame {
     private JButton btnAlterar;
     private JButton btnExcluir;
     private JButton btnPesquisar;
+    private ProfessorController professorController;
 
     public FormProfessor() {
+        professorController = new ProfessorController(this);
         setTitle("Cadastro de Professor");
         setSize(400, 300);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -106,6 +109,26 @@ public class FormProfessor extends JFrame {
         btnPesquisar = new JButton("Pesquisar");
 
         btnSalvar.addActionListener(e -> {
+            String nome = txtNome.getText().trim();
+            String endereco = txtEndereco.getText().trim();
+            String telefone = txtTelefone.getText().trim();
+            String email = txtEmail.getText().trim();
+            String matricula = txtMatricula.getText().trim();
+
+            String erro = professorController.salvarProfessor(nome, endereco, telefone, email, matricula);
+
+            if (erro == null) {
+                JOptionPane.showMessageDialog(this,
+                        "Professor salvo com sucesso!",
+                        "Sucesso",
+                        JOptionPane.INFORMATION_MESSAGE);
+                limparCampos();
+            } else {
+                JOptionPane.showMessageDialog(this,
+                        erro,
+                        "Erro de Validação",
+                        JOptionPane.ERROR_MESSAGE);
+            }
         
         });
         btnAlterar.addActionListener(e -> {
@@ -130,5 +153,14 @@ public class FormProfessor extends JFrame {
         painelPrincipal.add(painelBotoes, gbc);
         
         add(painelPrincipal);
+    }
+
+    private void limparCampos() {
+        txtNome.setText("");
+        txtEndereco.setText("");
+        txtTelefone.setText("");
+        txtEmail.setText("");
+        txtMatricula.setText("");
+        txtNome.requestFocus();
     }
 }
