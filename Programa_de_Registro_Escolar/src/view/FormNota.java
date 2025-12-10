@@ -1,5 +1,6 @@
 package view;
 
+import controller.NotaController;
 import java.awt.*;
 import javax.swing.*;
 
@@ -10,9 +11,11 @@ public class FormNota extends JFrame {
     private JButton btnAlterar;
     private JButton btnExcluir;
     private JButton btnPesquisar;
+    private NotaController notaController;
 
     public FormNota() {
         setTitle("Cadastro de Notas");
+        notaController = new NotaController(this);
         setSize(400, 150);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -50,6 +53,16 @@ public class FormNota extends JFrame {
         btnPesquisar = new JButton("Pesquisar");
 
         btnSalvar.addActionListener(e -> {
+            String nota = txtNota.getText().trim();
+
+            String erro = notaController.salvarNota(nota);
+
+            if (erro != null) {
+                JOptionPane.showMessageDialog(this, erro, "Erro", JOptionPane.ERROR_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, "Nota salva com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+                limparCampos();
+            }
         
         });
         btnAlterar.addActionListener(e -> {
@@ -74,6 +87,11 @@ public class FormNota extends JFrame {
         painelPrincipal.add(painelBotoes, gbc);
         
         add(painelPrincipal);
+    }
+
+    private void limparCampos() {
+        txtNota.setText("");
+        txtNota.requestFocus();
     }
 
     
