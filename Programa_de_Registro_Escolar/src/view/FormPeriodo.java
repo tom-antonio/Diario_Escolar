@@ -1,5 +1,6 @@
 package view;
 
+import controller.PeriodoController;
 import java.awt.*;
 import javax.swing.*;
 
@@ -10,9 +11,11 @@ public class FormPeriodo extends JFrame {
     private JButton btnAlterar;
     private JButton btnExcluir;
     private JButton btnPesquisar;
+    private PeriodoController periodoController;
 
     public FormPeriodo() {
         setTitle("Cadastro de Período");
+        periodoController = new PeriodoController(this);
         setSize(400, 150);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -28,7 +31,7 @@ public class FormPeriodo extends JFrame {
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.fill = GridBagConstraints.WEST;
 
-        //Campo Nome
+        //Campo Período
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.NONE;
@@ -50,8 +53,18 @@ public class FormPeriodo extends JFrame {
         btnPesquisar = new JButton("Pesquisar");
 
         btnSalvar.addActionListener(e -> {
-        
+            String nomePeriodo = txtNome_periodo.getText().trim();
+
+            String erro = periodoController.salvarPeriodo(nomePeriodo);
+
+            if (erro != null) {
+                JOptionPane.showMessageDialog(this, erro, "Erro", JOptionPane.ERROR_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, "Período salvo com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+                limparCampos();
+            }
         });
+
         btnAlterar.addActionListener(e -> {
         
         });
@@ -74,5 +87,10 @@ public class FormPeriodo extends JFrame {
         painelPrincipal.add(painelBotoes, gbc);
         
         add(painelPrincipal);
+    }
+
+    private void limparCampos() {
+        txtNome_periodo.setText("");
+        txtNome_periodo.requestFocus();
     }
 }

@@ -20,7 +20,7 @@ public class DisciplinaController {
 
     public String salvarDisciplina(String nomeDisciplina, String nomeProfessor, int idProfessor) {
 
-        if (nomeDisciplina == null || nomeDisciplina.trim().isEmpty()) {
+        if (nomeDisciplina == null || nomeDisciplina.isEmpty()) {
             return "Nome da disciplina não pode estar vazio.";
         }
 

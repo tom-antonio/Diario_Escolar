@@ -2,6 +2,8 @@ package view;
 
 import dao.DaoAluno;
 import dao.DaoDisciplina;
+import dao.DaoPeriodo;
+import dao.DaoTurma;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +12,8 @@ import javax.swing.table.DefaultTableModel;
 import model.Aluno;
 import model.Disciplina;
 import model.Nota;
+import model.Periodo;
+import model.Turma;
 
 public class FormDiario extends JFrame {
 
@@ -29,11 +33,15 @@ public class FormDiario extends JFrame {
     private List<Nota> notas;
     private DaoAluno daoAluno;
     private DaoDisciplina daoDisciplina;
+    private DaoPeriodo daoPeriodo;
+    private DaoTurma daoTurma;
 
     public FormDiario() {
         notas = new ArrayList<>();
         daoAluno = new DaoAluno();
         daoDisciplina = new DaoDisciplina();
+        daoPeriodo = new DaoPeriodo();
+        daoTurma = new DaoTurma();
         setTitle("Diário de Notas");
         setSize(700, 600);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -42,6 +50,8 @@ public class FormDiario extends JFrame {
         inicializarComponentes();
         carregarAlunos();
         carregarDisciplinas();
+        carregarPeriodos();
+        carregarTurmas();
         setVisible(true);
     }
 
@@ -77,9 +87,7 @@ public class FormDiario extends JFrame {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1;
 
-        DefaultComboBoxModel<String> modelPeriodo = new DefaultComboBoxModel<>();
-        modelPeriodo.addElement("Selecione um Período");
-        cmbPeriodo = new JComboBox<>(modelPeriodo);
+        cmbPeriodo = new JComboBox<>();
         painelPrincipal.add(cmbPeriodo, gbc);
 
         //Campo Turma
@@ -93,9 +101,7 @@ public class FormDiario extends JFrame {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1;
 
-        DefaultComboBoxModel<String> modelTurma = new DefaultComboBoxModel<>();
-        modelTurma.addElement("Selecione uma Turma");
-        cmbTurma = new JComboBox<>(modelTurma);
+        cmbTurma = new JComboBox<>();
         painelPrincipal.add(cmbTurma, gbc);
 
         //Campo Disciplina
@@ -271,6 +277,24 @@ public class FormDiario extends JFrame {
         cmbDisciplina.addItem("Selecione uma disciplina");
         for (Disciplina disciplina : disciplinas) {
             cmbDisciplina.addItem(disciplina.getNome_disciplina());
+        }
+    }
+
+    private void carregarPeriodos() {
+        List<Periodo> periodos = daoPeriodo.listarTodos();
+        cmbPeriodo.removeAllItems();
+        cmbPeriodo.addItem("Selecione um Período");
+        for (Periodo periodo : periodos) {
+            cmbPeriodo.addItem(periodo.getNome_periodo());
+        }
+    }
+
+    private void carregarTurmas() {
+        List<Turma> turmas = daoTurma.listarTodos();
+        cmbTurma.removeAllItems();
+        cmbTurma.addItem("Selecione uma Turma");
+        for (Turma turma : turmas) {
+            cmbTurma.addItem(turma.getNome_turma());
         }
     }
 }

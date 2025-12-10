@@ -1,18 +1,21 @@
 package view;
 
+import controller.TurmaController;
 import java.awt.*;
 import javax.swing.*;
 
 public class FormTurma extends JFrame {
 
-    private JTextField txtTurma;
+    private JTextField txtNome_turma;
     private JButton btnSalvar;
     private JButton btnAlterar;
     private JButton btnExcluir;
     private JButton btnPesquisar;
+    private TurmaController turmaController;
 
     public FormTurma() {
         setTitle("Cadastro de Turma");
+        turmaController = new TurmaController(this);
         setSize(400, 150);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -28,7 +31,7 @@ public class FormTurma extends JFrame {
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.fill = GridBagConstraints.WEST;
 
-        //Campo Nome
+        //Campo Turma
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.NONE;
@@ -38,8 +41,8 @@ public class FormTurma extends JFrame {
         gbc.gridx = 1;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1;
-        txtTurma = new JTextField(20);
-        painelPrincipal.add(txtTurma, gbc);
+        txtNome_turma = new JTextField(20);
+        painelPrincipal.add(txtNome_turma, gbc);
 
         //Painel de botões
         JPanel painelBotoes = new JPanel(new FlowLayout());
@@ -50,7 +53,16 @@ public class FormTurma extends JFrame {
         btnPesquisar = new JButton("Pesquisar");
 
         btnSalvar.addActionListener(e -> {
-        
+            String nomeTurma = txtNome_turma.getText().trim();
+
+            String erro = turmaController.salvarTurma(nomeTurma);
+
+            if (erro != null) {
+                JOptionPane.showMessageDialog(this, erro, "Erro", JOptionPane.ERROR_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, "Turma salva com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+                limparCampos();
+            }
         });
         btnAlterar.addActionListener(e -> {
         
@@ -74,5 +86,10 @@ public class FormTurma extends JFrame {
         painelPrincipal.add(painelBotoes, gbc);
         
         add(painelPrincipal);
+    }
+
+    private void limparCampos() {
+        txtNome_turma.setText("");
+        txtNome_turma.requestFocus();
     }
 }

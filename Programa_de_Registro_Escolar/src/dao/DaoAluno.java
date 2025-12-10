@@ -21,15 +21,13 @@ public class DaoAluno {
 				return false;
 			}
 
-			ps.setString(1, aluno.getNome());
-			ps.setString(2, aluno.getEndereco());
-			ps.setString(3, aluno.getTelefone());
-			ps.setString(4, aluno.getEmail());
-			ps.setLong(5, aluno.getMatricula());
-			ps.setString(6, aluno.getNome_pai());
-			ps.setString(7, aluno.getNome_mae());
-
-			ResultSet rs = ps.executeQuery();
+		ps.setString(1, aluno.getNome());
+		ps.setString(2, aluno.getEndereco());
+		ps.setString(3, aluno.getTelefone());
+		ps.setString(4, aluno.getEmail());
+		ps.setLong(5, aluno.getMatricula());
+		ps.setString(6, aluno.getNome_pai());
+		ps.setString(7, aluno.getNome_mae());			ResultSet rs = ps.executeQuery();
 			if (rs.next()) {
 				aluno.setId(rs.getInt(1));
 				return true;
@@ -53,16 +51,16 @@ public class DaoAluno {
 
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
-				Aluno aluno = new Aluno(
-					rs.getInt("id"),
-					rs.getString("nome"),
-					rs.getString("endereco"),
-					rs.getString("telefone"),
-					rs.getString("email"),
-					rs.getLong("matricula"),
-					rs.getString("nome_pai"),
-					rs.getString("nome_mae")
-				);
+			Aluno aluno = new Aluno(
+				rs.getInt("id"),
+				rs.getString("nome"),
+				rs.getString("endereco"),
+				rs.getString("telefone"),
+				rs.getString("email"),
+				rs.getLong("matricula"),
+				rs.getString("nome_pai"),
+				rs.getString("nome_mae")
+			);
 				alunos.add(aluno);
 			}
 		} catch (SQLException e) {

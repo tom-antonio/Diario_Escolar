@@ -21,13 +21,11 @@ public class DaoProfessor {
 				return false;
 			}
 
-			ps.setString(1, professor.getNome());
-			ps.setString(2, professor.getEndereco());
-			ps.setString(3, professor.getTelefone());
-			ps.setString(4, professor.getEmail());
-			ps.setLong(5, professor.getMatricula());
-
-			ResultSet rs = ps.executeQuery();
+		ps.setString(1, professor.getNome());
+		ps.setString(2, professor.getEndereco());
+		ps.setString(3, professor.getTelefone());
+		ps.setString(4, professor.getEmail());
+		ps.setLong(5, professor.getMatricula());			ResultSet rs = ps.executeQuery();
 			if (rs.next()) {
 				professor.setId(rs.getInt(1));
 				return true;
