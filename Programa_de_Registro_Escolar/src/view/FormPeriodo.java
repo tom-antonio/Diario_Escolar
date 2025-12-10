@@ -133,6 +133,11 @@ public class FormPeriodo extends JFrame {
                 if (periodo == null) {
                     JOptionPane.showMessageDialog(this, "Período não encontrado.", "Aviso", JOptionPane.WARNING_MESSAGE);
                     limparCampos();
+                } else {
+                    // Preencher os campos com os dados encontrados
+                    txtNome_periodo.setText(periodo.getNome_periodo());
+                    idPeriodoAtual = periodo.getId();
+                    LOG.info("Período encontrado e preenchido: " + periodo.getNome_periodo());
                 }
             } catch (NumberFormatException ex) {
                 JOptionPane.showMessageDialog(this, "ID inválido. Digite um número.", "Erro", JOptionPane.ERROR_MESSAGE);
