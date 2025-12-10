@@ -130,7 +130,6 @@ public class FormTurma extends JFrame {
             if (turma != null) {
                 txtNome_turma.setText(turma.getNome_turma());
                 idTurmaAtual = turma.getId();
-                JOptionPane.showMessageDialog(this, "Turma encontrada!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
             } else {
                 JOptionPane.showMessageDialog(this, "Turma não encontrada.", "Aviso", JOptionPane.WARNING_MESSAGE);
                 limparCampos();

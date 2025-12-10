@@ -244,64 +244,6 @@ public class FormDiario extends JFrame {
         add(painelPrincipal);
     }
     
-    private void atualizarSelecao() {
-        LOG.info("Atualizando seleção de filtros no diário de notas");
-        alunoSelecionado = (String) cmbAluno.getSelectedItem();
-        periodSelecionado = (String) cmbPeriodo.getSelectedItem();
-        turmaSelecionada = (String) cmbTurma.getSelectedItem();
-        disciplinaSelecionada = (String) cmbDisciplina.getSelectedItem();
-        
-        // Valida se algum é nulo ou está em "Selecione"
-        if (alunoSelecionado == null || alunoSelecionado.startsWith("Selecione") ||
-            periodSelecionado == null || periodSelecionado.startsWith("Selecione") ||
-            turmaSelecionada == null || turmaSelecionada.startsWith("Selecione") ||
-            disciplinaSelecionada == null || disciplinaSelecionada.startsWith("Selecione")) {
-            
-            notas.clear();
-            modeloLista.clear();
-            togStatus.setSelected(true);
-            diarioController.atualizarTextoStatus(togStatus);
-            return;
-        }
-
-        notas.clear();
-        atualizarExibicao();
-    }
-
-    private void atualizarExibicao() {
-        LOG.info("Atualizando exibição das notas no diário de notas");
-        diarioController.atualizarExibicao(notas, modeloLista, togStatus);
-    }
-    
-    private void limparCampos() {
-        LOG.info("Limpando campos do formulário do diário de notas");
-        notas.clear();
-        modeloLista.clear();
-        togStatus.setSelected(true);
-        idDiarioAtual = null;
-        
-        // Verifica se os ComboBoxes têm itens antes de definir índice
-        if (cmbAluno.getItemCount() > 0) {
-            cmbAluno.setSelectedIndex(0);
-        }
-        if (cmbDisciplina.getItemCount() > 0) {
-            cmbDisciplina.setSelectedIndex(0);
-        }
-        if (cmbPeriodo.getItemCount() > 0) {
-            cmbPeriodo.setSelectedIndex(0);
-        }
-        if (cmbTurma.getItemCount() > 0) {
-            cmbTurma.setSelectedIndex(0);
-        }
-        
-        diarioController.atualizarTextoStatus(togStatus);
-    }
-    
-    private void atualizarTextoStatus() {
-        LOG.info("Atualizando texto do status no diário de notas");
-        diarioController.atualizarTextoStatus(togStatus);
-    }
-    
     private void salvar() {
         LOG.info("Salvando novo diário de notas");
         // Validar seleções
@@ -565,5 +507,63 @@ public class FormDiario extends JFrame {
         double notaRemovida = notas.remove(indiceSelecionado);
         atualizarExibicao();
     
+    }
+
+        private void atualizarSelecao() {
+        LOG.info("Atualizando seleção de filtros no diário de notas");
+        alunoSelecionado = (String) cmbAluno.getSelectedItem();
+        periodSelecionado = (String) cmbPeriodo.getSelectedItem();
+        turmaSelecionada = (String) cmbTurma.getSelectedItem();
+        disciplinaSelecionada = (String) cmbDisciplina.getSelectedItem();
+        
+        // Valida se algum é nulo ou está em "Selecione"
+        if (alunoSelecionado == null || alunoSelecionado.startsWith("Selecione") ||
+            periodSelecionado == null || periodSelecionado.startsWith("Selecione") ||
+            turmaSelecionada == null || turmaSelecionada.startsWith("Selecione") ||
+            disciplinaSelecionada == null || disciplinaSelecionada.startsWith("Selecione")) {
+            
+            notas.clear();
+            modeloLista.clear();
+            togStatus.setSelected(true);
+            diarioController.atualizarTextoStatus(togStatus);
+            return;
+        }
+
+        notas.clear();
+        atualizarExibicao();
+    }
+
+    private void atualizarTextoStatus() {
+        LOG.info("Atualizando texto do status no diário de notas");
+        diarioController.atualizarTextoStatus(togStatus);
+    }
+
+    private void atualizarExibicao() {
+        LOG.info("Atualizando exibição das notas no diário de notas");
+        diarioController.atualizarExibicao(notas, modeloLista, togStatus);
+    }
+    
+    private void limparCampos() {
+        LOG.info("Limpando campos do formulário do diário de notas");
+        notas.clear();
+        modeloLista.clear();
+        togStatus.setSelected(true);
+        idDiarioAtual = null;
+        
+        // Verifica se os ComboBoxes têm itens antes de definir índice
+        if (cmbAluno.getItemCount() > 0) {
+            cmbAluno.setSelectedIndex(0);
+        }
+        if (cmbDisciplina.getItemCount() > 0) {
+            cmbDisciplina.setSelectedIndex(0);
+        }
+        if (cmbPeriodo.getItemCount() > 0) {
+            cmbPeriodo.setSelectedIndex(0);
+        }
+        if (cmbTurma.getItemCount() > 0) {
+            cmbTurma.setSelectedIndex(0);
+        }
+        
+        diarioController.atualizarTextoStatus(togStatus);
     }
 }
