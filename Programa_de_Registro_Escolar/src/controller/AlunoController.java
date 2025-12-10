@@ -6,6 +6,7 @@ import view.FormAluno;
 
 public class AlunoController {
 
+    private static final java.util.logging.Logger LOG = java.util.logging.Logger.getLogger(AlunoController.class.getName());
     private final DaoAluno daoAluno;
     private final PessoaController pessoaController;
     private FormAluno formAluno;
@@ -22,6 +23,7 @@ public class AlunoController {
 
     public String salvarAluno(String nome, String endereco, String telefone, String email, String matriculaStr, String nomePai, String nomeMae) {
 
+        LOG.info("Salvando aluno: " + nome);
         if (!pessoaController.validarNome(nome)) {
             return "Nome inválido.";
         }
@@ -68,6 +70,7 @@ public class AlunoController {
     }
 
     public boolean validarMatricula(String matricula) {
+        LOG.info("Validando matrícula: " + matricula);
         if (matricula == null || matricula.length() != 10) {
             return false;
         }
@@ -80,6 +83,7 @@ public class AlunoController {
     }
 
     public String alterarAluno(int id, String nome, String endereco, String telefone, String email, String matriculaStr, String nomePai, String nomeMae) {
+        LOG.info("Alterando aluno ID " + id + " para nome: " + nome);
         if (id <= 0) {
             return "ID inválido.";
         }
@@ -131,6 +135,7 @@ public class AlunoController {
     }
 
     public String excluirAluno(int id) {
+        LOG.info("Excluindo aluno ID: " + id);
         if (id <= 0) {
             return "ID inválido.";
         }
@@ -144,6 +149,7 @@ public class AlunoController {
     }
 
     public Aluno pesquisarAluno(String nome) {
+        LOG.info("Pesquisando aluno com nome: " + nome);
         if (nome == null || nome.trim().isEmpty()) {
             return null;
         }

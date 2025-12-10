@@ -19,8 +19,10 @@ public class FormAluno extends JFrame {
     private JButton btnPesquisar;
     private AlunoController alunoController;
     private Integer idAlunoAtual;
+    private static final java.util.logging.Logger LOG = java.util.logging.Logger.getLogger(FormAluno.class.getName());
 
     public FormAluno() {
+        LOG.info("Iniciando formulário de cadastro de aluno");
         alunoController = new AlunoController(this);
         setTitle("Cadastro de Aluno");
         setSize(400, 350);
@@ -32,6 +34,7 @@ public class FormAluno extends JFrame {
     }
 
     private void inicializarComponentes() {
+        LOG.info("Inicializando componentes do formulário de aluno");
         JPanel painelPrincipal = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
 
@@ -138,6 +141,7 @@ public class FormAluno extends JFrame {
         btnPesquisar = new JButton("Pesquisar");
 
         btnSalvar.addActionListener(e -> {
+            LOG.info("Salvando novo aluno");
             String nome = txtNome.getText().trim();
             String endereco = txtEndereco.getText().trim();
             String telefone = txtTelefone.getText().trim();
@@ -161,7 +165,9 @@ public class FormAluno extends JFrame {
                         JOptionPane.ERROR_MESSAGE);
             }
         });
+        
         btnAlterar.addActionListener(e -> {
+            LOG.info("Alterando aluno ID: " + idAlunoAtual);    
             if (idAlunoAtual == null) {
                 JOptionPane.showMessageDialog(this, "Nenhum aluno selecionado para alterar.", "Aviso", JOptionPane.WARNING_MESSAGE);
                 return;
@@ -184,7 +190,9 @@ public class FormAluno extends JFrame {
                 JOptionPane.showMessageDialog(this, erro, "Erro", JOptionPane.ERROR_MESSAGE);
             }
         });
+
         btnExcluir.addActionListener(e -> {
+            LOG.info("Excluindo aluno ID: " + idAlunoAtual);
             if (idAlunoAtual == null) {
                 JOptionPane.showMessageDialog(this, "Nenhum aluno selecionado para excluir.", "Aviso", JOptionPane.WARNING_MESSAGE);
                 return;
@@ -210,7 +218,9 @@ public class FormAluno extends JFrame {
                 JOptionPane.showMessageDialog(this, erro, "Erro", JOptionPane.ERROR_MESSAGE);
             }
         });
+
         btnPesquisar.addActionListener(e -> {
+            LOG.info("Pesquisando aluno");
             String nomeTexto = JOptionPane.showInputDialog(this, "Digite o nome do aluno:", "Pesquisar", JOptionPane.QUESTION_MESSAGE);
 
             if (nomeTexto == null || nomeTexto.trim().isEmpty()) {

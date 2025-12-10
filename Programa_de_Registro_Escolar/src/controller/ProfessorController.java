@@ -4,7 +4,10 @@ import dao.DaoProfessor;
 import model.Professor;
 import view.FormProfessor;
 
+
 public class ProfessorController {
+
+    private static final java.util.logging.Logger LOG = java.util.logging.Logger.getLogger(ProfessorController.class.getName());
 
     private final DaoProfessor daoProfessor;
     private final PessoaController pessoaController;
@@ -22,6 +25,7 @@ public class ProfessorController {
 
     public String salvarProfessor(String nome, String endereco, String telefone, String email, String matriculaStr) {
 
+        LOG.info("Salvando professor: " + nome);
         if (!pessoaController.validarNome(nome)) {
             return "Nome inválido.";
         }
@@ -58,6 +62,7 @@ public class ProfessorController {
     }
 
     public boolean validarMatricula(String matricula) {
+        LOG.info("Validando matrícula: " + matricula);
         if (matricula == null || matricula.length() != 10) {
             return false;
         }
@@ -70,6 +75,7 @@ public class ProfessorController {
     }
 
     public String alterarProfessor(int id, String nome, String endereco, String telefone, String email, String matriculaStr) {
+        LOG.info("Alterando professor ID: " + id);
         if (id <= 0) {
             return "ID inválido.";
         }
@@ -111,6 +117,7 @@ public class ProfessorController {
     }
 
     public String excluirProfessor(int id) {
+        LOG.info("Excluindo professor ID: " + id);
         if (id <= 0) {
             return "ID inválido.";
         }
@@ -124,6 +131,7 @@ public class ProfessorController {
     }
 
     public Professor pesquisarProfessorPorNome(String nome) {
+        LOG.info("Pesquisando professor por nome: " + nome);
         if (nome == null || nome.trim().isEmpty()) {
             return null;
         }

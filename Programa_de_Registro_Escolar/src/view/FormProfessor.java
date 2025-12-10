@@ -17,8 +17,10 @@ public class FormProfessor extends JFrame {
     private JButton btnPesquisar;
     private ProfessorController professorController;
     private Integer idProfessorAtual;
+    private static final java.util.logging.Logger LOG = java.util.logging.Logger.getLogger(FormProfessor.class.getName());
 
     public FormProfessor() {
+        LOG.info("Iniciando formulário de cadastro de professor");
         professorController = new ProfessorController(this);
         setTitle("Cadastro de Professor");
         setSize(400, 300);
@@ -30,6 +32,7 @@ public class FormProfessor extends JFrame {
     }
 
     private void inicializarComponentes() {
+        LOG.info("Inicializando componentes do formulário de professor");
         JPanel painelPrincipal = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
 
@@ -110,6 +113,7 @@ public class FormProfessor extends JFrame {
         btnPesquisar = new JButton("Pesquisar");
 
         btnSalvar.addActionListener(e -> {
+            LOG.info("Salvando novo professor");
             String nome = txtNome.getText().trim();
             String endereco = txtEndereco.getText().trim();
             String telefone = txtTelefone.getText().trim();
@@ -132,7 +136,9 @@ public class FormProfessor extends JFrame {
             }
         
         });
+
         btnAlterar.addActionListener(e -> {
+            LOG.info("Alterando professor ID: " + idProfessorAtual);
             if (idProfessorAtual == null) {
                 JOptionPane.showMessageDialog(this, "Nenhum professor selecionado para alterar.", "Aviso", JOptionPane.WARNING_MESSAGE);
                 return;
@@ -153,7 +159,9 @@ public class FormProfessor extends JFrame {
                 JOptionPane.showMessageDialog(this, erro, "Erro", JOptionPane.ERROR_MESSAGE);
             }
         });
+
         btnExcluir.addActionListener(e -> {
+            LOG.info("Excluindo professor ID: " + idProfessorAtual);
             if (idProfessorAtual == null) {
                 JOptionPane.showMessageDialog(this, "Nenhum professor selecionado para excluir.", "Aviso", JOptionPane.WARNING_MESSAGE);
                 return;
@@ -181,6 +189,7 @@ public class FormProfessor extends JFrame {
         });
 
         btnPesquisar.addActionListener(e -> {
+            LOG.info("Pesquisando professor");
             String nomeTexto = JOptionPane.showInputDialog(this, "Digite o nome do professor:", "Pesquisar", JOptionPane.QUESTION_MESSAGE);
 
             if (nomeTexto == null || nomeTexto.trim().isEmpty()) {
@@ -217,6 +226,7 @@ public class FormProfessor extends JFrame {
     }
 
     private void limparCampos() {
+        LOG.info("Limpando campos do formulário de professor");
         txtNome.setText("");
         txtEndereco.setText("");
         txtTelefone.setText("");

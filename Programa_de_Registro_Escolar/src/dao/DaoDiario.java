@@ -13,6 +13,7 @@ import model.Disciplina;
 
 public class DaoDiario {
 
+	private static final java.util.logging.Logger LOG = java.util.logging.Logger.getLogger(DaoDiario.class.getName());
 	private final NotaController notaController;
 	private final DaoAluno daoAluno;
 	private final DaoDisciplina daoDisciplina;
@@ -24,6 +25,7 @@ public class DaoDiario {
 	}
 
 	public boolean salvar(Diario diario, int idAluno, int idDisciplina, int idPeriodo, int idTurma) {
+		LOG.info("Salvando diário para aluno ID: " + idAluno + ", disciplina ID: " + idDisciplina);
 		String sql = "INSERT INTO tdiario (fk_aluno, fk_disciplina, fk_periodo, fk_turma, fk_nota, status) "
 				   + "VALUES (?, ?, ?, ?, ?, ?) RETURNING id";
 
@@ -76,6 +78,7 @@ public class DaoDiario {
 	}
 
 	public List<Diario> listarTodos() {
+		LOG.info("Listando todos os diários na base de dados");
 		List<Diario> diarios = new ArrayList<>();
 		String sql = "SELECT id, fk_aluno, fk_disciplina, fk_periodo, fk_turma, fk_nota, status FROM tdiario ORDER BY id";
 
@@ -114,6 +117,7 @@ public class DaoDiario {
 	}
 
 	public boolean alterar(Diario diario, int idAluno, int idDisciplina, int idPeriodo, int idTurma) {
+		LOG.info("Alterando diário ID: " + diario.getId());
 		String sql = "UPDATE tdiario SET fk_aluno = ?, fk_disciplina = ?, fk_periodo = ?, fk_turma = ?, fk_nota = ?, status = ? WHERE id = ?";
 
 		try (Connection conn = Postgres.conectar();
@@ -162,6 +166,7 @@ public class DaoDiario {
 	}
 
 	public boolean excluir(int id) {
+		LOG.info("Excluindo diário ID: " + id);
 		String sql = "DELETE FROM tdiario WHERE id = ?";
 
 		try (Connection conn = Postgres.conectar();
@@ -182,6 +187,7 @@ public class DaoDiario {
 	}
 
 	public Diario pesquisarAluno(String nomeAluno, String nomeDisciplina) {
+		LOG.info("Pesquisando diário para aluno: " + nomeAluno + ", disciplina: " + nomeDisciplina);
 		String sql = "SELECT d.id, d.fk_aluno, d.fk_disciplina, d.fk_periodo, d.fk_turma, d.fk_nota, d.status "
 				   + "FROM tdiario d "
 				   + "INNER JOIN taluno a ON d.fk_aluno = a.id "
@@ -227,11 +233,13 @@ public class DaoDiario {
 	}
 
 	public Integer buscarIdAlunoPorNome(String nome) {
+		LOG.info("Buscando ID do aluno por nome: " + nome);
 		Aluno aluno = daoAluno.buscarPorNome(nome);
 		return aluno != null ? aluno.getId() : null;
 	}
 
 	public Integer buscarIdDisciplinaPorNome(String nome) {
+		LOG.info("Buscando ID da disciplina por nome: " + nome);
 		Disciplina disciplina = daoDisciplina.pesquisar(nome);
 		return disciplina != null ? disciplina.getId() : null;
 	}

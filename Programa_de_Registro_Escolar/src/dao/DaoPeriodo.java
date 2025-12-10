@@ -10,7 +10,10 @@ import model.Periodo;
 
 public class DaoPeriodo {
 
+	private static final java.util.logging.Logger LOG = java.util.logging.Logger.getLogger(DaoPeriodo.class.getName());
+
 	public boolean salvar(Periodo periodo) {
+		LOG.info("Salvando período: " + periodo.getNome_periodo());
 		String sql = "INSERT INTO tperiodo (nome_periodo) "
 				   + "VALUES (?) RETURNING id";
 
@@ -35,6 +38,7 @@ public class DaoPeriodo {
 	}
 
 	public List<Periodo> listarTodos() {
+		LOG.info("Listando todos os períodos na base de dados");
 		List<Periodo> periodos = new ArrayList<>();
 		String sql = "SELECT id, nome_periodo FROM tperiodo ORDER BY nome_periodo";
 
@@ -60,6 +64,7 @@ public class DaoPeriodo {
 	}
 
 	public boolean alterar(Periodo periodo) {
+		LOG.info("Alterando período ID " + periodo.getId() + " para nome: " + periodo.getNome_periodo());
 		String sql = "UPDATE tperiodo SET nome_periodo = ? WHERE id = ?";
 
 		try (Connection conn = Postgres.conectar();
@@ -81,6 +86,7 @@ public class DaoPeriodo {
 	}
 
 	public boolean excluir(int id) {
+		LOG.info("Excluindo período ID: " + id);
 		String sql = "DELETE FROM tperiodo WHERE id = ?";
 
 		try (Connection conn = Postgres.conectar();
@@ -101,6 +107,7 @@ public class DaoPeriodo {
 	}
 
 	public Periodo buscarPorId(int id) {
+		LOG.info("Buscando período com ID: " + id);
 		String sql = "SELECT id, nome_periodo FROM tperiodo WHERE id = ?";
 
 		try (Connection conn = Postgres.conectar();

@@ -9,7 +9,8 @@ import model.Nota;
 import view.FormDiario;
 
 public class DiarioController {
-    
+
+    private static final java.util.logging.Logger LOG = java.util.logging.Logger.getLogger(DiarioController.class.getName());
     private final DaoDiario daoDiario;
     private FormDiario formDiario;
 
@@ -23,6 +24,7 @@ public class DiarioController {
     }
     
     public double calcularMedia(List<Double> notas) {
+        LOG.info("Calculando média para notas: " + notas);
         if (notas.isEmpty()) return 0;
         
         double soma = 0;
@@ -34,7 +36,7 @@ public class DiarioController {
     }
     
     public void atualizarExibicao(List<Double> notas, DefaultListModel<String> modeloLista, JToggleButton togStatus) {
-        // Limpa lista
+        LOG.info("Atualizando exibição de notas: " + notas);
         modeloLista.clear();
         
         // Adiciona notas na JList
@@ -54,6 +56,7 @@ public class DiarioController {
     }
     
     public void atualizarTextoStatus(JToggleButton togStatus) {
+        LOG.info("Atualizando texto do status do diário.");
         if (togStatus.isSelected()) {
             togStatus.setText("Aprovado");
         } else {
@@ -62,6 +65,7 @@ public class DiarioController {
     }
 
     public String salvarDiario(int idAluno, int idDisciplina, int idPeriodo, int idTurma, List<Double> notasValores, boolean status) {
+        LOG.info("Salvando diário para aluno ID: " + idAluno + ", disciplina ID: " + idDisciplina);
         if (idAluno <= 0) {
             return "Aluno inválido.";
         }
@@ -104,6 +108,7 @@ public class DiarioController {
     }
 
     public String alterarDiario(int idDiario, int idAluno, int idDisciplina, int idPeriodo, int idTurma, List<Double> notasValores, boolean status) {
+        LOG.info("Alterando diário ID: " + idDiario + " para aluno ID: " + idAluno + ", disciplina ID: " + idDisciplina);
         if (idDiario <= 0) {
             return "ID do diário inválido.";
         }
@@ -151,6 +156,7 @@ public class DiarioController {
     }
 
     public String excluirDiario(int idDiario) {
+        LOG.info("Excluindo diário ID: " + idDiario);
         if (idDiario <= 0) {
             return "ID do diário inválido.";
         }
@@ -164,6 +170,7 @@ public class DiarioController {
     }
 
     public Diario pesquisarDiario(String nomeAluno, String nomeDisciplina) {
+        LOG.info("Pesquisando diário para aluno: " + nomeAluno + ", disciplina: " + nomeDisciplina);
         if (nomeAluno == null || nomeAluno.trim().isEmpty()) {
             return null;
         }

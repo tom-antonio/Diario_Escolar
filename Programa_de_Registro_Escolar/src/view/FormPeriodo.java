@@ -13,8 +13,10 @@ public class FormPeriodo extends JFrame {
     private JButton btnPesquisar;
     private PeriodoController periodoController;
     private Integer idPeriodoAtual;
+    private static final java.util.logging.Logger LOG = java.util.logging.Logger.getLogger(FormPeriodo.class.getName());
 
     public FormPeriodo() {
+        LOG.info("Iniciando formulário de cadastro de período");
         setTitle("Cadastro de Período");
         periodoController = new PeriodoController(this);
         setSize(400, 150);
@@ -26,6 +28,7 @@ public class FormPeriodo extends JFrame {
     }
 
     private void inicializarComponentes() {
+        LOG.info("Inicializando componentes do formulário de período");
         JPanel painelPrincipal = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
 
@@ -54,6 +57,7 @@ public class FormPeriodo extends JFrame {
         btnPesquisar = new JButton("Pesquisar");
 
         btnSalvar.addActionListener(e -> {
+            LOG.info("Salvando novo período");
             String nomePeriodo = txtNome_periodo.getText().trim();
 
             String erro = periodoController.salvarPeriodo(nomePeriodo);
@@ -67,6 +71,7 @@ public class FormPeriodo extends JFrame {
         });
 
         btnAlterar.addActionListener(e -> {
+            LOG.info("Alterando período ID: " + idPeriodoAtual);
             if (idPeriodoAtual == null) {
                 JOptionPane.showMessageDialog(this, "Nenhum período selecionado para alterar.", "Aviso", JOptionPane.WARNING_MESSAGE);
                 return;
@@ -85,6 +90,7 @@ public class FormPeriodo extends JFrame {
         });
 
         btnExcluir.addActionListener(e -> {
+            LOG.info("Excluindo período ID: " + idPeriodoAtual);
             if (idPeriodoAtual == null) {
                 JOptionPane.showMessageDialog(this, "Nenhum período selecionado para excluir.", "Aviso", JOptionPane.WARNING_MESSAGE);
                 return;
@@ -112,6 +118,7 @@ public class FormPeriodo extends JFrame {
         });
 
         btnPesquisar.addActionListener(e -> {
+            LOG.info("Pesquisando período");
             String idTexto = JOptionPane.showInputDialog(this, "Digite o ID do período:", "Pesquisar", JOptionPane.QUESTION_MESSAGE);
 
             if (idTexto == null || idTexto.trim().isEmpty()) {
@@ -147,6 +154,7 @@ public class FormPeriodo extends JFrame {
     }
 
     private void limparCampos() {
+        LOG.info("Limpando campos do formulário de período");
         txtNome_periodo.setText("");
         idPeriodoAtual = null;
         txtNome_periodo.requestFocus();

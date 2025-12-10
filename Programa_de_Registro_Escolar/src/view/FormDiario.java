@@ -45,8 +45,10 @@ public class FormDiario extends JFrame {
     private String periodSelecionado;
     private String turmaSelecionada;
     private Integer idDiarioAtual;
+    private static final java.util.logging.Logger LOG = java.util.logging.Logger.getLogger(FormDiario.class.getName());
 
     public FormDiario() {
+            LOG.info("Iniciando formulário do diário de notas");
             notas = new ArrayList<>();
             daoAluno = new DaoAluno();
             daoDisciplina = new DaoDisciplina();
@@ -73,6 +75,7 @@ public class FormDiario extends JFrame {
     }
 
     private void inicializarComponentes() {
+        LOG.info("Inicializando componentes do formulário do diário de notas");
         JPanel painelPrincipal = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
 
@@ -242,6 +245,7 @@ public class FormDiario extends JFrame {
     }
     
     private void atualizarSelecao() {
+        LOG.info("Atualizando seleção de filtros no diário de notas");
         alunoSelecionado = (String) cmbAluno.getSelectedItem();
         periodSelecionado = (String) cmbPeriodo.getSelectedItem();
         turmaSelecionada = (String) cmbTurma.getSelectedItem();
@@ -265,10 +269,12 @@ public class FormDiario extends JFrame {
     }
 
     private void atualizarExibicao() {
+        LOG.info("Atualizando exibição das notas no diário de notas");
         diarioController.atualizarExibicao(notas, modeloLista, togStatus);
     }
     
     private void limparCampos() {
+        LOG.info("Limpando campos do formulário do diário de notas");
         notas.clear();
         modeloLista.clear();
         togStatus.setSelected(true);
@@ -292,10 +298,12 @@ public class FormDiario extends JFrame {
     }
     
     private void atualizarTextoStatus() {
+        LOG.info("Atualizando texto do status no diário de notas");
         diarioController.atualizarTextoStatus(togStatus);
     }
     
     private void salvar() {
+        LOG.info("Salvando novo diário de notas");
         // Validar seleções
         if (alunoSelecionado == null || alunoSelecionado.startsWith("Selecione")) {
             JOptionPane.showMessageDialog(this, "Selecione um aluno.", "Erro", JOptionPane.ERROR_MESSAGE);
@@ -340,6 +348,7 @@ public class FormDiario extends JFrame {
     }
     
     private void alterar() {
+        LOG.info("Alterando diário de notas ID: " + idDiarioAtual);
         if (idDiarioAtual == null) {
             JOptionPane.showMessageDialog(this, "Selecione um diário para alterar.", "Erro", JOptionPane.ERROR_MESSAGE);
             return;
@@ -389,6 +398,7 @@ public class FormDiario extends JFrame {
     }
     
     private void excluir() {
+        LOG.info("Excluindo diário de notas ID: " + idDiarioAtual);
         if (idDiarioAtual == null) {
             JOptionPane.showMessageDialog(this, "Selecione um diário para excluir.", "Erro", JOptionPane.ERROR_MESSAGE);
             return;
@@ -412,6 +422,7 @@ public class FormDiario extends JFrame {
     }
     
     private void pesquisar() {
+        LOG.info("Pesquisando diário de notas");
         String nomeAluno = JOptionPane.showInputDialog(this, "Digite o nome do aluno:", "Pesquisar", JOptionPane.QUESTION_MESSAGE);
         
         if (nomeAluno == null || nomeAluno.trim().isEmpty()) {
@@ -449,6 +460,7 @@ public class FormDiario extends JFrame {
     }
 
     private void carregarAlunos() {
+        LOG.info("Carregando alunos para o ComboBox");
         List<Aluno> alunos = daoAluno.listarTodos();
         cmbAluno.removeAllItems();
         cmbAluno.addItem("Selecione um Aluno");
@@ -461,6 +473,7 @@ public class FormDiario extends JFrame {
     }
 
     private void carregarDisciplinas() {
+        LOG.info("Carregando disciplinas para o ComboBox");
         List<Disciplina> disciplinas = daoDisciplina.listarTodos();
         cmbDisciplina.removeAllItems();
         cmbDisciplina.addItem("Selecione uma disciplina");
@@ -473,6 +486,7 @@ public class FormDiario extends JFrame {
     }
 
     private void carregarPeriodos() {
+        LOG.info("Carregando períodos para o ComboBox");
         List<Periodo> periodos = daoPeriodo.listarTodos();
         cmbPeriodo.removeAllItems();
         cmbPeriodo.addItem("Selecione um Período");
@@ -485,6 +499,7 @@ public class FormDiario extends JFrame {
     }
 
     private void carregarTurmas() {
+        LOG.info("Carregando turmas para o ComboBox");
         List<Turma> turmas = daoTurma.listarTodos();
         cmbTurma.removeAllItems();
         cmbTurma.addItem("Selecione uma Turma");
@@ -497,6 +512,7 @@ public class FormDiario extends JFrame {
     }
 
     private void adicionarNota() {
+        LOG.info("Adicionando nova nota ao diário de notas");
         String input = JOptionPane.showInputDialog(
             this,
             "Informe uma nota:",
@@ -533,6 +549,7 @@ public class FormDiario extends JFrame {
     }
 
     private void removerNota() {
+        LOG.info("Removendo nota do diário de notas");
         int indiceSelecionado = listNotas.getSelectedIndex();
         
         if (indiceSelecionado == -1) {

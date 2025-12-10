@@ -6,6 +6,7 @@ import view.FormPeriodo;
 
 public class PeriodoController {
 
+    private static final java.util.logging.Logger LOG = java.util.logging.Logger.getLogger(PeriodoController.class.getName());
     private final DaoPeriodo daoPeriodo;
     private FormPeriodo formPeriodo;
 
@@ -20,6 +21,7 @@ public class PeriodoController {
 
     public String salvarPeriodo(String nomePeriodo) {
 
+        LOG.info("Salvando período: " + nomePeriodo);
         if (nomePeriodo == null || nomePeriodo.isEmpty()) {
             return "Nome do periodo não pode estar vazio.";
         }
@@ -36,6 +38,7 @@ public class PeriodoController {
     }
 
     public String alterarPeriodo(int id, String nomePeriodo) {
+        LOG.info("Alterando período ID " + id + " para nome: " + nomePeriodo);
         if (id <= 0) {
             return "ID inválido.";
         }
@@ -57,6 +60,7 @@ public class PeriodoController {
     }
 
     public String excluirPeriodo(int id) {
+        LOG.info("Excluindo período ID: " + id);
         if (id <= 0) {
             return "ID inválido.";
         }
@@ -70,6 +74,7 @@ public class PeriodoController {
     }
 
     public Periodo pesquisarPeriodo(int id) {
+        LOG.info("Pesquisando período com ID: " + id);
         if (id <= 0) {
             return null;
         }

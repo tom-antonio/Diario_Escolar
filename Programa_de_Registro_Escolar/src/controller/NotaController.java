@@ -5,6 +5,7 @@ import model.Nota;
 
 public class NotaController {
 
+    private static final java.util.logging.Logger LOG = java.util.logging.Logger.getLogger(NotaController.class.getName());
     private final DaoNota daoNota;
     
     public NotaController() {
@@ -16,6 +17,8 @@ public class NotaController {
     }
 
     public boolean salvarNotasPorDiario(int idDiario, java.util.List<Nota> notas) {
+
+        LOG.info("Salvando notas para o diário ID: " + idDiario);
         if (idDiario <= 0) {
             return false;
         }
@@ -28,6 +31,7 @@ public class NotaController {
     }
 
     public boolean excluirNotasPorDiario(int idDiario) {
+        LOG.info("Excluindo notas para o diário ID: " + idDiario);
         if (idDiario <= 0) {
             return false;
         }

@@ -13,8 +13,10 @@ public class FormTurma extends JFrame {
     private JButton btnPesquisar;
     private TurmaController turmaController;
     private Integer idTurmaAtual;
+    private static final java.util.logging.Logger LOG = java.util.logging.Logger.getLogger(FormTurma.class.getName());
 
     public FormTurma() {
+        LOG.info("Iniciando formulário de cadastro de turma");
         setTitle("Cadastro de Turma");
         turmaController = new TurmaController(this);
         setSize(400, 150);
@@ -26,6 +28,7 @@ public class FormTurma extends JFrame {
     }
 
     private void inicializarComponentes() {
+        LOG.info("Inicializando componentes do formulário de turma");
         JPanel painelPrincipal = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
 
@@ -54,6 +57,7 @@ public class FormTurma extends JFrame {
         btnPesquisar = new JButton("Pesquisar");
 
         btnSalvar.addActionListener(e -> {
+            LOG.info("Salvando nova turma");
             String nomeTurma = txtNome_turma.getText().trim();
 
             String erro = turmaController.salvarTurma(nomeTurma);
@@ -65,7 +69,9 @@ public class FormTurma extends JFrame {
                 limparCampos();
             }
         });
+
         btnAlterar.addActionListener(e -> {
+            LOG.info("Alterando turma existente");
             if (idTurmaAtual == null) {
                 JOptionPane.showMessageDialog(this, "Nenhuma turma selecionada para alterar.", "Aviso", JOptionPane.WARNING_MESSAGE);
                 return;
@@ -82,7 +88,9 @@ public class FormTurma extends JFrame {
                 limparCampos();
             }
         });
+
         btnExcluir.addActionListener(e -> {
+            LOG.info("Excluindo turma ID: " + idTurmaAtual);
             if (idTurmaAtual == null) {
                 JOptionPane.showMessageDialog(this, "Nenhuma turma selecionada para excluir.", "Aviso", JOptionPane.WARNING_MESSAGE);
                 return;
@@ -108,7 +116,9 @@ public class FormTurma extends JFrame {
                 limparCampos();
             }
         });
+
         btnPesquisar.addActionListener(e -> {
+            LOG.info("Pesquisando turma");
             String nomeTurma = JOptionPane.showInputDialog(this, "Digite o nome da turma:", "Pesquisar", JOptionPane.QUESTION_MESSAGE);
 
             if (nomeTurma == null || nomeTurma.trim().isEmpty()) {
@@ -142,6 +152,7 @@ public class FormTurma extends JFrame {
     }
 
     private void limparCampos() {
+        LOG.info("Limpando campos do formulário de turma");
         txtNome_turma.setText("");
         idTurmaAtual = null;
         txtNome_turma.requestFocus();

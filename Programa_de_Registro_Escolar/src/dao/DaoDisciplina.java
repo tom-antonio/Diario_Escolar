@@ -11,7 +11,10 @@ import model.Disciplina;
 
 public class DaoDisciplina {
 
+	private static final java.util.logging.Logger LOG = java.util.logging.Logger.getLogger(DaoDisciplina.class.getName());
+
 	public boolean salvar(Disciplina disciplina) {
+		LOG.info("Salvando disciplina: " + disciplina.getNome_disciplina());
 		String sql = "INSERT INTO tdisciplina (nome_disciplina, id_professor) VALUES (?, ?)";
 
 		try (Connection conn = Postgres.conectar();
@@ -39,6 +42,7 @@ public class DaoDisciplina {
 	}
 
 	public List<Disciplina> listarTodos() {
+		LOG.info("Listando todas as disciplinas na base de dados");
 		List<Disciplina> disciplinas = new ArrayList<>();
 		String sql = "SELECT id, nome_disciplina, id_professor FROM tdisciplina ORDER BY nome_disciplina";
 
@@ -65,6 +69,7 @@ public class DaoDisciplina {
 	}
 
 	public boolean alterar(Disciplina disciplina) {
+		LOG.info("Alterando disciplina ID: " + disciplina.getId());
 		String sql = "UPDATE tdisciplina SET nome_disciplina = ?, id_professor = ? WHERE id = ?";
 
 		try (Connection conn = Postgres.conectar();
@@ -87,6 +92,7 @@ public class DaoDisciplina {
 	}
 
 	public boolean excluir(int id) {
+		LOG.info("Excluindo disciplina ID: " + id);
 		String sql = "DELETE FROM tdisciplina WHERE id = ?";
 
 		try (Connection conn = Postgres.conectar();
@@ -107,6 +113,7 @@ public class DaoDisciplina {
 	}
 
 	public Disciplina pesquisar(String nome) {
+		LOG.info("Pesquisando disciplina com nome: " + nome);
 		String sql = "SELECT id, nome_disciplina, id_professor FROM tdisciplina WHERE nome_disciplina = ? LIMIT 1";
 
 		try (Connection conn = Postgres.conectar();

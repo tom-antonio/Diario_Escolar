@@ -1,11 +1,13 @@
 package controller;
 
 import dao.DaoTurma;
+import java.util.logging.Logger;
 import model.Turma;
 import view.FormTurma;
 
 public class TurmaController {
 
+    private static final Logger LOG = Logger.getLogger(TurmaController.class.getName());
     private final DaoTurma daoTurma;
     private FormTurma formTurma;
 
@@ -20,6 +22,7 @@ public class TurmaController {
 
     public String salvarTurma(String nomeTurma) {
 
+        LOG.info("Salvando turma: " + nomeTurma);
         if (nomeTurma == null || nomeTurma.isEmpty()) {
             return "Nome do turma não pode estar vazio.";
         }
@@ -36,6 +39,7 @@ public class TurmaController {
     }
 
     public String alterarTurma(int id, String nomeTurma) {
+        LOG.info("Alterando turma ID " + id + " para nome: " + nomeTurma);
         if (id <= 0) {
             return "ID inválido.";
         }
@@ -57,6 +61,7 @@ public class TurmaController {
     }
 
     public String excluirTurma(int id) {
+        LOG.info("Excluindo turma ID: " + id);
         if (id <= 0) {
             return "ID inválido.";
         }
@@ -70,6 +75,7 @@ public class TurmaController {
     }
 
     public Turma pesquisarTurma(String nome) {
+        LOG.info("Pesquisando turma com nome: " + nome);
         if (nome == null || nome.trim().isEmpty()) {
             return null;
         }

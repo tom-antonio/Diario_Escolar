@@ -10,7 +10,10 @@ import model.Professor;
 
 public class DaoProfessor {
 
+	private static final java.util.logging.Logger LOG = java.util.logging.Logger.getLogger(DaoProfessor.class.getName());	
+
 	public boolean salvar(Professor professor) {
+		LOG.info("Salvando professor: " + professor.getNome());
 		String sql = "INSERT INTO tprofessor (nome, endereco, telefone, email, matricula) "
 				   + "VALUES (?, ?, ?, ?, ?) RETURNING id";
 
@@ -37,6 +40,7 @@ public class DaoProfessor {
 	}
 
 	public List<Professor> listarTodos() {
+		LOG.info("Listando todos os professores na base de dados");
 		List<Professor> professores = new ArrayList<>();
 		String sql = "SELECT id, nome, endereco, telefone, email, matricula FROM tprofessor ORDER BY nome";
 
@@ -66,6 +70,7 @@ public class DaoProfessor {
 	}
 
 	public boolean alterar(Professor professor) {
+		LOG.info("Alterando professor ID: " + professor.getId());
 		String sql = "UPDATE tprofessor SET nome = ?, endereco = ?, telefone = ?, email = ?, matricula = ? WHERE id = ?";
 
 		try (Connection conn = Postgres.conectar();
@@ -91,6 +96,7 @@ public class DaoProfessor {
 	}
 
 	public boolean excluir(int id) {
+		LOG.info("Excluindo professor ID: " + id);
 		String sql = "DELETE FROM tprofessor WHERE id = ?";
 
 		try (Connection conn = Postgres.conectar();
@@ -111,6 +117,7 @@ public class DaoProfessor {
 	}
 
 	public Professor buscarPorNome(String nome) {
+		LOG.info("Buscando professor por nome: " + nome);
 		String sql = "SELECT id, nome, endereco, telefone, email, matricula FROM tprofessor WHERE nome = ? LIMIT 1";
 
 		try (Connection conn = Postgres.conectar();

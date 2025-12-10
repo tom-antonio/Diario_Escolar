@@ -8,8 +8,11 @@ import javax.swing.*;
 
 public class FormTelaPrincipal extends JFrame {
 
+    private static final java.util.logging.Logger LOG = java.util.logging.Logger.getLogger(FormTelaPrincipal.class.getName());
+
     public FormTelaPrincipal(){
 
+        LOG.info("Iniciando tela principal do sistema de registro escolar");
         setTitle("Sistema de Registro Escolar");
         setSize(400, 300);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -22,6 +25,7 @@ public class FormTelaPrincipal extends JFrame {
     }
 
     private void criarMenu() {
+        LOG.info("Criando menu da tela principal");
         JMenuBar menuBar = new JMenuBar();
 
         JMenu menuCadastros = new JMenu("Cadastros");
@@ -70,6 +74,7 @@ public class FormTelaPrincipal extends JFrame {
     }
 
     private void criarConteudoPrincipal() {
+        LOG.info("Criando conteúdo principal da tela inicial");
         //Criar painel principal
         JPanel painelPrincipal = new JPanel(new BorderLayout());
 
@@ -188,6 +193,7 @@ public class FormTelaPrincipal extends JFrame {
     }
 
     private void mostrarSobre() {
+        LOG.info("Exibindo informações sobre o sistema");
         String mensagem = "Sistema de Registro Escolar\n" +
             "Versão 1.0\n\n" +
             "Desenvolvido para o gerenciamento de:\n" +
@@ -201,7 +207,7 @@ public class FormTelaPrincipal extends JFrame {
     }
 
     private void abrirFormularioAluno() {
-        //Cria nova instância do formulário de aluno
+        LOG.info("Abrindo formulário de cadastro de alunos");
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
@@ -211,7 +217,7 @@ public class FormTelaPrincipal extends JFrame {
     }
 
     private void abrirFormularioProfessor() {
-        //Cria nova instância do formulário de professor
+        LOG.info("Abrindo formulário de cadastro de professores");
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
@@ -221,7 +227,7 @@ public class FormTelaPrincipal extends JFrame {
     }
 
     private void abrirFormularioDiario() {
-        //Cria nova instância do formulário de diário
+        LOG.info("Abrindo formulário de cadastro de diário");
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
@@ -231,7 +237,7 @@ public class FormTelaPrincipal extends JFrame {
     }
 
     private void abrirFormularioDisciplina() {
-        //Cria nova instância do formulário de disciplina
+        LOG.info("Abrindo formulário de cadastro de disciplinas");
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
@@ -241,7 +247,7 @@ public class FormTelaPrincipal extends JFrame {
     }
 
     private void abrirFormularioPeriodo() {
-        //Cria nova instância do formulário de período
+        LOG.info("Abrindo formulário de cadastro de períodos");
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
@@ -251,7 +257,7 @@ public class FormTelaPrincipal extends JFrame {
     }
 
     private void abrirFormularioTurma() {
-        //Cria nova instância do formulário de turma
+        LOG.info("Abrindo formulário de cadastro de turmas");
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {

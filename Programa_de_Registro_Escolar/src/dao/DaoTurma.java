@@ -10,7 +10,10 @@ import model.Turma;
 
 public class DaoTurma {
 
+	private static final java.util.logging.Logger LOG = java.util.logging.Logger.getLogger(DaoTurma.class.getName());
+
 	public boolean salvar(Turma turma) {
+		LOG.info("Salvando turma: " + turma.getNome_turma());
 		String sql = "INSERT INTO tturma (nome_turma) "
 				   + "VALUES (?) RETURNING id";
 
@@ -35,6 +38,7 @@ public class DaoTurma {
 	}
 
 	public List<Turma> listarTodos() {
+		LOG.info("Listando todas as turmas na base de dados");
 		List<Turma> turmas = new ArrayList<>();
 		String sql = "SELECT id, nome_turma FROM tturma ORDER BY nome_turma";
 
@@ -60,6 +64,7 @@ public class DaoTurma {
 	}
 
 	public boolean alterar(Turma turma) {
+		LOG.info("Alterando turma ID: " + turma.getId());
 		String sql = "UPDATE tturma SET nome_turma = ? WHERE id = ?";
 
 		try (Connection conn = Postgres.conectar();
@@ -81,6 +86,7 @@ public class DaoTurma {
 	}
 
 	public boolean excluir(int id) {
+		LOG.info("Excluindo turma ID: " + id);
 		String sql = "DELETE FROM tturma WHERE id = ?";
 
 		try (Connection conn = Postgres.conectar();
@@ -101,6 +107,7 @@ public class DaoTurma {
 	}
 
 	public Turma pesquisar(String nome) {
+		LOG.info("Buscando turma por nome: " + nome);
 		String sql = "SELECT id, nome_turma FROM tturma WHERE nome_turma = ? LIMIT 1";
 
 		try (Connection conn = Postgres.conectar();

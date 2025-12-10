@@ -21,8 +21,10 @@ public class FormDisciplina extends JFrame {
     private DisciplinaController disciplinaController;
     private Map<String, Integer> professoresMap;
     private Integer idDisciplinaAtual;
+    private static final java.util.logging.Logger LOG = java.util.logging.Logger.getLogger(FormDisciplina.class.getName());
 
     public FormDisciplina() {
+        LOG.info("Iniciando formulário de cadastro de disciplina");
         disciplinaController = new DisciplinaController(this);
         daoProfessor = new DaoProfessor();
         professoresMap = new HashMap<>();
@@ -37,6 +39,7 @@ public class FormDisciplina extends JFrame {
     }
 
     private void inicializarComponentes() {
+        LOG.info("Inicializando componentes do formulário de disciplina");
         JPanel painelPrincipal = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
 
@@ -80,6 +83,7 @@ public class FormDisciplina extends JFrame {
         btnPesquisar = new JButton("Pesquisar");
 
         btnSalvar.addActionListener(e -> {
+            LOG.info("Salvando nova disciplina");
             String nomeDisciplina = txtNome_disciplina.getText().trim();
             String nomeProfessor = (String) cmbProfessor.getSelectedItem();
             int idProfessor = professoresMap.getOrDefault(nomeProfessor, -1);
@@ -99,7 +103,9 @@ public class FormDisciplina extends JFrame {
                         JOptionPane.ERROR_MESSAGE);
             }
         });
+
         btnAlterar.addActionListener(e -> {
+            LOG.info("Alterando disciplina ID: " + idDisciplinaAtual);
             if (idDisciplinaAtual == null) {
                 JOptionPane.showMessageDialog(this,
                         "Selecione uma disciplina para alterar.",
@@ -129,6 +135,7 @@ public class FormDisciplina extends JFrame {
         });
 
         btnExcluir.addActionListener(e -> {
+            LOG.info("Excluindo disciplina ID: " + idDisciplinaAtual);
             if (idDisciplinaAtual == null) {
                 JOptionPane.showMessageDialog(this,
                         "Selecione uma disciplina para excluir.",
@@ -161,6 +168,7 @@ public class FormDisciplina extends JFrame {
         });
 
         btnPesquisar.addActionListener(e -> {
+            LOG.info("Pesquisando disciplina");
             String nomeDisciplina = JOptionPane.showInputDialog(this,
                     "Digite o nome da disciplina para pesquisar:");
 
@@ -195,6 +203,7 @@ public class FormDisciplina extends JFrame {
     }
 
     private void carregarProfessor() {
+        LOG.info("Carregando professores para o ComboBox");
         List<Professor> professores = daoProfessor.listarTodos();
         cmbProfessor.removeAllItems();
         professoresMap.clear();
@@ -206,6 +215,7 @@ public class FormDisciplina extends JFrame {
     }
 
     private void limparCampos() {
+        LOG.info("Limpando campos do formulário de disciplina");
         txtNome_disciplina.setText("");
         cmbProfessor.setSelectedIndex(0);
         idDisciplinaAtual = null;
@@ -213,6 +223,7 @@ public class FormDisciplina extends JFrame {
     }
 
     private String getProfessorNomeById(int id) {
+        LOG.info("Obtendo nome do professor pelo ID: " + id);
         for (Map.Entry<String, Integer> entry : professoresMap.entrySet()) {
             if (entry.getValue() == id) {
                 return entry.getKey();

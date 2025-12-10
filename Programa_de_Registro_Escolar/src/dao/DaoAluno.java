@@ -10,7 +10,10 @@ import model.Aluno;
 
 public class DaoAluno {
 
+	private static final java.util.logging.Logger LOG = java.util.logging.Logger.getLogger(DaoAluno.class.getName());
+
 	public boolean salvar(Aluno aluno) {
+		LOG.info("Salvando aluno: " + aluno.getNome());
 		String sql = "INSERT INTO taluno (nome, endereco, telefone, email, matricula, nome_pai, nome_mae) "
 				   + "VALUES (?, ?, ?, ?, ?, ?, ?) RETURNING id";
 
@@ -39,6 +42,7 @@ public class DaoAluno {
 	}
 
 	public List<Aluno> listarTodos() {
+		LOG.info("Listando todos os alunos na base de dados");
 		List<Aluno> alunos = new ArrayList<>();
 		String sql = "SELECT id, nome, endereco, telefone, email, matricula, nome_pai, nome_mae FROM taluno ORDER BY nome";
 
@@ -70,6 +74,7 @@ public class DaoAluno {
 	}
 
 	public boolean alterar(Aluno aluno) {
+		LOG.info("Alterando aluno ID: " + aluno.getId());
 		String sql = "UPDATE taluno SET nome = ?, endereco = ?, telefone = ?, email = ?, matricula = ?, nome_pai = ?, nome_mae = ? WHERE id = ?";
 
 		try (Connection conn = Postgres.conectar();
@@ -97,6 +102,7 @@ public class DaoAluno {
 	}
 
 	public boolean excluir(int id) {
+		LOG.info("Excluindo aluno ID: " + id);
 		String sql = "DELETE FROM taluno WHERE id = ?";
 
 		try (Connection conn = Postgres.conectar();
@@ -117,6 +123,7 @@ public class DaoAluno {
 	}
 
 	public Aluno buscarPorId(int id) {
+		LOG.info("Buscando aluno por ID: " + id);
 		String sql = "SELECT id, nome, endereco, telefone, email, matricula, nome_pai, nome_mae FROM taluno WHERE id = ?";
 
 		try (Connection conn = Postgres.conectar();
@@ -148,6 +155,7 @@ public class DaoAluno {
 	}
 
 	public Aluno buscarPorNome(String nome) {
+		LOG.info("Buscando aluno por nome: " + nome);
 		String sql = "SELECT id, nome, endereco, telefone, email, matricula, nome_pai, nome_mae FROM taluno WHERE nome = ? LIMIT 1";
 
 		try (Connection conn = Postgres.conectar();

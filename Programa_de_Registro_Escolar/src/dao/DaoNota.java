@@ -10,7 +10,10 @@ import model.Nota;
 
 public class DaoNota {
 
+	private static final java.util.logging.Logger LOG = java.util.logging.Logger.getLogger(DaoNota.class.getName());
+
 	public boolean salvar(Nota nota) {
+		LOG.info("Salvando nota: " + nota.getNota());
 		String sql = "INSERT INTO tnota (nota) "
 				   + "VALUES (?) RETURNING id";
 
@@ -35,6 +38,7 @@ public class DaoNota {
 	}
 
 	public List<Nota> listarTodos() {
+		LOG.info("Listando todas as notas na base de dados");
 		List<Nota> notas = new ArrayList<>();
 		String sql = "SELECT id, nota FROM tnota ORDER BY nota";
 
@@ -60,6 +64,7 @@ public class DaoNota {
 	}
 
 	public Nota buscarPorId(int id) {
+		LOG.info("Buscando nota por ID: " + id);
 		String sql = "SELECT id, nota FROM tnota WHERE id = ?";
 
 		try (Connection conn = Postgres.conectar();
@@ -82,6 +87,7 @@ public class DaoNota {
 	}
 
 	public boolean salvarNotasPorDiario(int idDiario, List<Nota> notas) {
+		LOG.info("Salvando notas para o diário ID: " + idDiario);
 		String sql = "INSERT INTO tnota (id_diario, nota) VALUES (?, ?)";
 
 		try (Connection conn = Postgres.conectar();
@@ -107,6 +113,7 @@ public class DaoNota {
 	}
 
 	public boolean excluirNotasPorDiario(int idDiario) {
+		LOG.info("Excluindo notas para o diário ID: " + idDiario);
 		String sql = "DELETE FROM tnota WHERE id_diario = ?";
 
 		try (Connection conn = Postgres.conectar();

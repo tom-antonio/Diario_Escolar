@@ -10,8 +10,7 @@ public class Diario {
     private List<Disciplina> disciplina;
     private List<Periodo> periodo;
     private List<Turma> turma;
-    private final List<Nota> notas;  // Composição: Notas pertencem exclusivamente ao Diário
-
+    private final List<Nota> notas;
     public Diario() {
         this.notas = new ArrayList<>();
     }
