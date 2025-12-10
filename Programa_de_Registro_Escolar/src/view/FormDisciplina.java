@@ -20,6 +20,7 @@ public class FormDisciplina extends JFrame {
     private DaoProfessor daoProfessor;
     private DisciplinaController disciplinaController;
     private Map<String, Integer> professoresMap;
+    private Integer idDisciplinaAtual;
 
     public FormDisciplina() {
         disciplinaController = new DisciplinaController(this);
@@ -99,13 +100,84 @@ public class FormDisciplina extends JFrame {
             }
         });
         btnAlterar.addActionListener(e -> {
-        
-        });
-        btnExcluir.addActionListener(e -> {
-        
-        });
-        btnPesquisar.addActionListener(e -> {
+            if (idDisciplinaAtual == null) {
+                JOptionPane.showMessageDialog(this,
+                        "Selecione uma disciplina para alterar.",
+                        "Erro",
+                        JOptionPane.ERROR_MESSAGE);
+                return;
+            }
 
+            String nomeDisciplina = txtNome_disciplina.getText().trim();
+            String nomeProfessor = (String) cmbProfessor.getSelectedItem();
+            int idProfessor = professoresMap.getOrDefault(nomeProfessor, -1);
+
+            String erro = disciplinaController.alterarDisciplina(idDisciplinaAtual, nomeDisciplina, idProfessor);
+
+            if (erro == null) {
+                JOptionPane.showMessageDialog(this,
+                        "Disciplina alterada com sucesso!",
+                        "Sucesso",
+                        JOptionPane.INFORMATION_MESSAGE);
+                limparCampos();
+            } else {
+                JOptionPane.showMessageDialog(this,
+                        erro,
+                        "Erro de Validação",
+                        JOptionPane.ERROR_MESSAGE);
+            }
+        });
+
+        btnExcluir.addActionListener(e -> {
+            if (idDisciplinaAtual == null) {
+                JOptionPane.showMessageDialog(this,
+                        "Selecione uma disciplina para excluir.",
+                        "Erro",
+                        JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            int confirmacao = JOptionPane.showConfirmDialog(this,
+                    "Deseja realmente excluir esta disciplina?",
+                    "Confirmar Exclusão",
+                    JOptionPane.YES_NO_OPTION);
+
+            if (confirmacao == JOptionPane.YES_OPTION) {
+                String erro = disciplinaController.excluirDisciplina(idDisciplinaAtual);
+
+                if (erro == null) {
+                    JOptionPane.showMessageDialog(this,
+                            "Disciplina excluída com sucesso!",
+                            "Sucesso",
+                            JOptionPane.INFORMATION_MESSAGE);
+                    limparCampos();
+                } else {
+                    JOptionPane.showMessageDialog(this,
+                            erro,
+                            "Erro ao Excluir",
+                            JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+
+        btnPesquisar.addActionListener(e -> {
+            String nomeDisciplina = JOptionPane.showInputDialog(this,
+                    "Digite o nome da disciplina para pesquisar:");
+
+            if (nomeDisciplina != null && !nomeDisciplina.trim().isEmpty()) {
+                model.Disciplina disciplinaEncontrada = disciplinaController.pesquisarDisciplina(nomeDisciplina);
+
+                if (disciplinaEncontrada != null) {
+                    txtNome_disciplina.setText(disciplinaEncontrada.getNome_disciplina());
+                    cmbProfessor.setSelectedItem(getProfessorNomeById(disciplinaEncontrada.getId_professor()));
+                    idDisciplinaAtual = disciplinaEncontrada.getId();
+                } else {
+                    JOptionPane.showMessageDialog(this,
+                            "Disciplina não encontrada.",
+                            "Pesquisa",
+                            JOptionPane.INFORMATION_MESSAGE);
+                }
+            }
         });
 
         painelBotoes.add(btnSalvar);
@@ -136,6 +208,16 @@ public class FormDisciplina extends JFrame {
     private void limparCampos() {
         txtNome_disciplina.setText("");
         cmbProfessor.setSelectedIndex(0);
+        idDisciplinaAtual = null;
         txtNome_disciplina.requestFocus();
+    }
+
+    private String getProfessorNomeById(int id) {
+        for (Map.Entry<String, Integer> entry : professoresMap.entrySet()) {
+            if (entry.getValue() == id) {
+                return entry.getKey();
+            }
+        }
+        return "Selecione um Professor";
     }
 }

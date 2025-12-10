@@ -100,8 +100,8 @@ public class DaoTurma {
 		return false;
 	}
 
-	public Turma buscarPorId(int id) {
-		String sql = "SELECT id, nome_turma FROM tturma WHERE id = ?";
+	public Turma pesquisar(String nome) {
+		String sql = "SELECT id, nome_turma FROM tturma WHERE nome_turma = ? LIMIT 1";
 
 		try (Connection conn = Postgres.conectar();
 			 PreparedStatement ps = conn != null ? conn.prepareStatement(sql) : null) {
@@ -110,7 +110,7 @@ public class DaoTurma {
 				return null;
 			}
 
-			ps.setInt(1, id);
+			ps.setString(1, nome);
 
 			ResultSet rs = ps.executeQuery();
 			if (rs.next()) {

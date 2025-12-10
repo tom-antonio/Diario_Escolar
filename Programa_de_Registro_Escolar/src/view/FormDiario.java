@@ -1,5 +1,6 @@
 package view;
 
+import controller.DiarioController;
 import dao.DaoAluno;
 import dao.DaoDisciplina;
 import dao.DaoPeriodo;
@@ -13,7 +14,6 @@ import model.Aluno;
 import model.Disciplina;
 import model.Periodo;
 import model.Turma;
-import controller.DiarioController;
 
 public class FormDiario extends JFrame {
 

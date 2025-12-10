@@ -64,4 +64,78 @@ public class DaoProfessor {
 		}
 		return professores;
 	}
+
+	public boolean alterar(Professor professor) {
+		String sql = "UPDATE tprofessor SET nome = ?, endereco = ?, telefone = ?, email = ?, matricula = ? WHERE id = ?";
+
+		try (Connection conn = Postgres.conectar();
+			 PreparedStatement ps = conn != null ? conn.prepareStatement(sql) : null) {
+
+			if (ps == null) {
+				return false;
+			}
+
+			ps.setString(1, professor.getNome());
+			ps.setString(2, professor.getEndereco());
+			ps.setString(3, professor.getTelefone());
+			ps.setString(4, professor.getEmail());
+			ps.setLong(5, professor.getMatricula());
+			ps.setInt(6, professor.getId());
+
+			int linhasAfetadas = ps.executeUpdate();
+			return linhasAfetadas > 0;
+		} catch (SQLException e) {
+			System.out.println("Erro ao alterar professor: " + e.getMessage());
+		}
+		return false;
+	}
+
+	public boolean excluir(int id) {
+		String sql = "DELETE FROM tprofessor WHERE id = ?";
+
+		try (Connection conn = Postgres.conectar();
+			 PreparedStatement ps = conn != null ? conn.prepareStatement(sql) : null) {
+
+			if (ps == null) {
+				return false;
+			}
+
+			ps.setInt(1, id);
+
+			int linhasAfetadas = ps.executeUpdate();
+			return linhasAfetadas > 0;
+		} catch (SQLException e) {
+			System.out.println("Erro ao excluir professor: " + e.getMessage());
+		}
+		return false;
+	}
+
+	public Professor buscarPorNome(String nome) {
+		String sql = "SELECT id, nome, endereco, telefone, email, matricula FROM tprofessor WHERE nome = ? LIMIT 1";
+
+		try (Connection conn = Postgres.conectar();
+			 PreparedStatement ps = conn != null ? conn.prepareStatement(sql) : null) {
+
+			if (ps == null) {
+				return null;
+			}
+
+			ps.setString(1, nome);
+
+			ResultSet rs = ps.executeQuery();
+			if (rs.next()) {
+				return new Professor(
+					rs.getInt("id"),
+					rs.getString("nome"),
+					rs.getString("endereco"),
+					rs.getString("telefone"),
+					rs.getString("email"),
+					rs.getLong("matricula")
+				);
+			}
+		} catch (SQLException e) {
+			System.out.println("Erro ao buscar professor por nome: " + e.getMessage());
+		}
+		return null;
+	}
 }

@@ -63,4 +63,73 @@ public class DaoDisciplina {
 		}
 		return disciplinas;
 	}
+
+	public boolean alterar(Disciplina disciplina) {
+		String sql = "UPDATE tdisciplina SET nome_disciplina = ?, id_professor = ? WHERE id = ?";
+
+		try (Connection conn = Postgres.conectar();
+			 PreparedStatement ps = conn != null ? conn.prepareStatement(sql) : null) {
+
+			if (ps == null) {
+				return false;
+			}
+
+			ps.setString(1, disciplina.getNome_disciplina());
+			ps.setInt(2, disciplina.getId_professor());
+			ps.setInt(3, disciplina.getId());
+
+			int linhasAfetadas = ps.executeUpdate();
+			return linhasAfetadas > 0;
+		} catch (SQLException e) {
+			System.out.println("Erro ao alterar disciplina: " + e.getMessage());
+		}
+		return false;
+	}
+
+	public boolean excluir(int id) {
+		String sql = "DELETE FROM tdisciplina WHERE id = ?";
+
+		try (Connection conn = Postgres.conectar();
+			 PreparedStatement ps = conn != null ? conn.prepareStatement(sql) : null) {
+
+			if (ps == null) {
+				return false;
+			}
+
+			ps.setInt(1, id);
+
+			int linhasAfetadas = ps.executeUpdate();
+			return linhasAfetadas > 0;
+		} catch (SQLException e) {
+			System.out.println("Erro ao excluir disciplina: " + e.getMessage());
+		}
+		return false;
+	}
+
+	public Disciplina Pesquisar(String nome) {
+		String sql = "SELECT id, nome_disciplina, id_professor FROM tdisciplina WHERE nome_disciplina = ? LIMIT 1";
+
+		try (Connection conn = Postgres.conectar();
+			 PreparedStatement ps = conn != null ? conn.prepareStatement(sql) : null) {
+
+			if (ps == null) {
+				return null;
+			}
+
+			ps.setString(1, nome);
+
+			ResultSet rs = ps.executeQuery();
+			if (rs.next()) {
+				Disciplina disciplina = new Disciplina(
+					rs.getString("nome_disciplina"),
+					rs.getInt("id_professor")
+				);
+				disciplina.setId(rs.getInt("id"));
+				return disciplina;
+			}
+		} catch (SQLException e) {
+			System.out.println("Erro ao buscar disciplina por nome: " + e.getMessage());
+		}
+		return null;
+	}
 }

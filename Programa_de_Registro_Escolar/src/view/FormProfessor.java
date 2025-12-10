@@ -16,6 +16,7 @@ public class FormProfessor extends JFrame {
     private JButton btnExcluir;
     private JButton btnPesquisar;
     private ProfessorController professorController;
+    private Integer idProfessorAtual;
 
     public FormProfessor() {
         professorController = new ProfessorController(this);
@@ -132,13 +133,73 @@ public class FormProfessor extends JFrame {
         
         });
         btnAlterar.addActionListener(e -> {
-        
+            if (idProfessorAtual == null) {
+                JOptionPane.showMessageDialog(this, "Nenhum professor selecionado para alterar.", "Aviso", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            String nome = txtNome.getText().trim();
+            String endereco = txtEndereco.getText().trim();
+            String telefone = txtTelefone.getText().trim();
+            String email = txtEmail.getText().trim();
+            String matricula = txtMatricula.getText().trim();
+
+            String erro = professorController.alterarProfessor(idProfessorAtual, nome, endereco, telefone, email, matricula);
+
+            if (erro == null) {
+                JOptionPane.showMessageDialog(this, "Professor alterado com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+                limparCampos();
+            } else {
+                JOptionPane.showMessageDialog(this, erro, "Erro", JOptionPane.ERROR_MESSAGE);
+            }
         });
         btnExcluir.addActionListener(e -> {
-        
-        });
-        btnPesquisar.addActionListener(e -> {
+            if (idProfessorAtual == null) {
+                JOptionPane.showMessageDialog(this, "Nenhum professor selecionado para excluir.", "Aviso", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
 
+            int confirmacao = JOptionPane.showConfirmDialog(
+                this,
+                "Tem certeza que deseja excluir este professor?",
+                "Confirmar Exclusão",
+                JOptionPane.YES_NO_OPTION
+            );
+
+            if (confirmacao != JOptionPane.YES_OPTION) {
+                return;
+            }
+
+            String erro = professorController.excluirProfessor(idProfessorAtual);
+
+            if (erro == null) {
+                JOptionPane.showMessageDialog(this, "Professor excluído com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+                limparCampos();
+            } else {
+                JOptionPane.showMessageDialog(this, erro, "Erro", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+
+        btnPesquisar.addActionListener(e -> {
+            String nomeTexto = JOptionPane.showInputDialog(this, "Digite o nome do professor:", "Pesquisar", JOptionPane.QUESTION_MESSAGE);
+
+            if (nomeTexto == null || nomeTexto.trim().isEmpty()) {
+                return;
+            }
+
+            model.Professor professor = professorController.pesquisarProfessorPorNome(nomeTexto.trim());
+
+            if (professor == null) {
+                JOptionPane.showMessageDialog(this, "Professor não encontrado.", "Aviso", JOptionPane.WARNING_MESSAGE);
+                limparCampos();
+            } else {
+                idProfessorAtual = professor.getId();
+                txtNome.setText(professor.getNome());
+                txtEndereco.setText(professor.getEndereco());
+                txtTelefone.setText(professor.getTelefone());
+                txtEmail.setText(professor.getEmail());
+                txtMatricula.setText(String.valueOf(professor.getMatricula()));
+            }
         });
 
         painelBotoes.add(btnSalvar);
@@ -161,6 +222,7 @@ public class FormProfessor extends JFrame {
         txtTelefone.setText("");
         txtEmail.setText("");
         txtMatricula.setText("");
+        idProfessorAtual = null;
         txtNome.requestFocus();
     }
 }

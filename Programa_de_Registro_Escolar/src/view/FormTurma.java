@@ -109,23 +109,21 @@ public class FormTurma extends JFrame {
             }
         });
         btnPesquisar.addActionListener(e -> {
-            String idTexto = JOptionPane.showInputDialog(this, "Digite o ID da turma:", "Pesquisar", JOptionPane.QUESTION_MESSAGE);
+            String nomeTurma = JOptionPane.showInputDialog(this, "Digite o nome da turma:", "Pesquisar", JOptionPane.QUESTION_MESSAGE);
 
-            if (idTexto == null || idTexto.trim().isEmpty()) {
+            if (nomeTurma == null || nomeTurma.trim().isEmpty()) {
                 return;
             }
 
-            try {
-                int id = Integer.parseInt(idTexto.trim());
-                
-                model.Turma turma = turmaController.pesquisarTurma(id);
+            model.Turma turma = turmaController.pesquisarTurma(nomeTurma);
 
-                if (turma == null) {
-                    JOptionPane.showMessageDialog(this, "Turma não encontrada.", "Aviso", JOptionPane.WARNING_MESSAGE);
-                    limparCampos();
-                }
-            } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(this, "ID inválido. Digite um número.", "Erro", JOptionPane.ERROR_MESSAGE);
+            if (turma != null) {
+                txtNome_turma.setText(turma.getNome_turma());
+                idTurmaAtual = turma.getId();
+                JOptionPane.showMessageDialog(this, "Turma encontrada!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, "Turma não encontrada.", "Aviso", JOptionPane.WARNING_MESSAGE);
+                limparCampos();
             }
         });
 

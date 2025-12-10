@@ -69,11 +69,11 @@ public class TurmaController {
         return null;
     }
 
-    public Turma pesquisarTurma(int id) {
-        if (id <= 0) {
+    public Turma pesquisarTurma(String nome) {
+        if (nome == null || nome.trim().isEmpty()) {
             return null;
         }
 
-        return daoTurma.buscarPorId(id);
+        return daoTurma.pesquisar(nome.trim());
     }
 }
