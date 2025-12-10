@@ -59,6 +59,28 @@ public class DaoNota {
 		return notas;
 	}
 
+	public Nota buscarPorId(int id) {
+		String sql = "SELECT id, nota FROM tnota WHERE id = ?";
+
+		try (Connection conn = Postgres.conectar();
+			 PreparedStatement ps = conn != null ? conn.prepareStatement(sql) : null) {
+
+			if (ps == null) {
+				return null;
+			}
+
+			ps.setInt(1, id);
+			ResultSet rs = ps.executeQuery();
+			
+			if (rs.next()) {
+				return new Nota(rs.getInt("id"), rs.getDouble("nota"));
+			}
+		} catch (SQLException e) {
+			System.out.println("Erro ao buscar nota por ID: " + e.getMessage());
+		}
+		return null;
+	}
+
 	public boolean salvarNotasPorDiario(int idDiario, List<Nota> notas) {
 		String sql = "INSERT INTO tnota (id_diario, nota) VALUES (?, ?)";
 
@@ -78,7 +100,8 @@ public class DaoNota {
 			ps.executeBatch();
 			return true;
 		} catch (SQLException e) {
-			System.out.println("Erro ao salvar notas: " + e.getMessage());
+			System.err.println("Erro ao salvar notas: " + e.getMessage());
+			e.printStackTrace();
 		}
 		return false;
 	}

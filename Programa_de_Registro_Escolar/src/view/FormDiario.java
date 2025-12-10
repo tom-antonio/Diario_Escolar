@@ -47,29 +47,29 @@ public class FormDiario extends JFrame {
     private Integer idDiarioAtual;
 
     public FormDiario() {
-        notas = new ArrayList<>();
-        daoAluno = new DaoAluno();
-        daoDisciplina = new DaoDisciplina();
-        daoPeriodo = new DaoPeriodo();
-        daoTurma = new DaoTurma();
-        diarioController = new DiarioController();
-        
-        alunosMap = new HashMap<>();
-        disciplinasMap = new HashMap<>();
-        periodosMap = new HashMap<>();
-        turmasMap = new HashMap<>();
-        
-        setTitle("Diário de Notas");
-        setSize(500, 500);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setLocationRelativeTo(null);
+            notas = new ArrayList<>();
+            daoAluno = new DaoAluno();
+            daoDisciplina = new DaoDisciplina();
+            daoPeriodo = new DaoPeriodo();
+            daoTurma = new DaoTurma();
+            diarioController = new DiarioController();
+            
+            alunosMap = new HashMap<>();
+            disciplinasMap = new HashMap<>();
+            periodosMap = new HashMap<>();
+            turmasMap = new HashMap<>();
+            
+            setTitle("Diário de Notas");
+            setSize(500, 500);
+            setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            setLocationRelativeTo(null);
 
-        inicializarComponentes();
-        carregarAlunos();
-        carregarDisciplinas();
-        carregarPeriodos();
-        carregarTurmas();
-        setVisible(true);
+            inicializarComponentes();
+            carregarAlunos();
+            carregarDisciplinas();
+            carregarPeriodos();
+            carregarTurmas();
+            setVisible(true);
     }
 
     private void inicializarComponentes() {
@@ -247,13 +247,16 @@ public class FormDiario extends JFrame {
         turmaSelecionada = (String) cmbTurma.getSelectedItem();
         disciplinaSelecionada = (String) cmbDisciplina.getSelectedItem();
         
-        // Valida se algum está em "Selecione"
-        if (alunoSelecionado.startsWith("Selecione") ||
-            periodSelecionado.startsWith("Selecione") ||
-            turmaSelecionada.startsWith("Selecione") ||
-            disciplinaSelecionada.startsWith("Selecione")) {
+        // Valida se algum é nulo ou está em "Selecione"
+        if (alunoSelecionado == null || alunoSelecionado.startsWith("Selecione") ||
+            periodSelecionado == null || periodSelecionado.startsWith("Selecione") ||
+            turmaSelecionada == null || turmaSelecionada.startsWith("Selecione") ||
+            disciplinaSelecionada == null || disciplinaSelecionada.startsWith("Selecione")) {
             
-            limparCampos();
+            notas.clear();
+            modeloLista.clear();
+            togStatus.setSelected(true);
+            diarioController.atualizarTextoStatus(togStatus);
             return;
         }
 
@@ -270,10 +273,21 @@ public class FormDiario extends JFrame {
         modeloLista.clear();
         togStatus.setSelected(true);
         idDiarioAtual = null;
-        cmbAluno.setSelectedIndex(0);
-        cmbDisciplina.setSelectedIndex(0);
-        cmbPeriodo.setSelectedIndex(0);
-        cmbTurma.setSelectedIndex(0);
+        
+        // Verifica se os ComboBoxes têm itens antes de definir índice
+        if (cmbAluno.getItemCount() > 0) {
+            cmbAluno.setSelectedIndex(0);
+        }
+        if (cmbDisciplina.getItemCount() > 0) {
+            cmbDisciplina.setSelectedIndex(0);
+        }
+        if (cmbPeriodo.getItemCount() > 0) {
+            cmbPeriodo.setSelectedIndex(0);
+        }
+        if (cmbTurma.getItemCount() > 0) {
+            cmbTurma.setSelectedIndex(0);
+        }
+        
         diarioController.atualizarTextoStatus(togStatus);
     }
     
@@ -485,6 +499,7 @@ public class FormDiario extends JFrame {
     private void adicionarNota() {
         String input = JOptionPane.showInputDialog(
             this,
+            "Informe uma nota:",
             "Adicionar Nota",
             JOptionPane.QUESTION_MESSAGE
         );

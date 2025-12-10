@@ -1,31 +1,31 @@
 package dao;
 
-import controller.NotaController;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import controller.NotaController;
 import model.Aluno;
 import model.Diario;
 import model.Disciplina;
 
 public class DaoDiario {
 
+	private final NotaController notaController;
 	private final DaoAluno daoAluno;
 	private final DaoDisciplina daoDisciplina;
-	private final NotaController notaController;
 
 	public DaoDiario() {
+		this.notaController = new NotaController();
 		this.daoAluno = new DaoAluno();
 		this.daoDisciplina = new DaoDisciplina();
-		this.notaController = new NotaController();
 	}
 
 	public boolean salvar(Diario diario, int idAluno, int idDisciplina, int idPeriodo, int idTurma) {
-		String sql = "INSERT INTO tdiario (id_aluno, id_disciplina, id_periodo, id_turma, status) "
-				   + "VALUES (?, ?, ?, ?, ?) RETURNING id";
+		String sql = "INSERT INTO tdiario (fk_aluno, fk_disciplina, fk_periodo, fk_turma, fk_nota, status) "
+				   + "VALUES (?, ?, ?, ?, ?, ?) RETURNING id";
 
 		try (Connection conn = Postgres.conectar();
 			 PreparedStatement ps = conn != null ? conn.prepareStatement(sql) : null) {
@@ -38,25 +38,46 @@ public class DaoDiario {
 			ps.setInt(2, idDisciplina);
 			ps.setInt(3, idPeriodo);
 			ps.setInt(4, idTurma);
-			ps.setBoolean(5, diario.isStatus());
+			
+			// Se houver notas, salvar a primeira e usar seu ID
+			Integer idNota = null;
+			if (diario.getNotas() != null && !diario.getNotas().isEmpty()) {
+				// Salvar a primeira nota para obter o ID
+				model.Nota primeiraNota = diario.getNotas().get(0);
+				DaoNota daoNota = new DaoNota();
+				if (daoNota.salvar(primeiraNota)) {
+					idNota = primeiraNota.getId();
+				}
+			}
+			
+			ps.setObject(5, idNota);
+			ps.setBoolean(6, diario.isStatus());
 
 			ResultSet rs = ps.executeQuery();
 			if (rs.next()) {
 				int idDiario = rs.getInt(1);
 				diario.setId(idDiario);
 				
-				// Salvar notas associadas via NotaController
-				return notaController.salvarNotasPorDiario(idDiario, diario.getNotas());
+				// Salvar demais notas se existirem
+				if (diario.getNotas() != null && diario.getNotas().size() > 1) {
+					DaoNota daoNota = new DaoNota();
+					for (int i = 1; i < diario.getNotas().size(); i++) {
+						daoNota.salvar(diario.getNotas().get(i));
+					}
+				}
+				
+				return true;
 			}
 		} catch (SQLException e) {
-			System.out.println("Erro ao salvar diário: " + e.getMessage());
+			System.err.println("Erro ao salvar diário: " + e.getMessage());
+			e.printStackTrace();
 		}
 		return false;
 	}
 
 	public List<Diario> listarTodos() {
 		List<Diario> diarios = new ArrayList<>();
-		String sql = "SELECT id, id_aluno, id_disciplina, id_periodo, id_turma, status FROM tdiario ORDER BY id";
+		String sql = "SELECT id, fk_aluno, fk_disciplina, fk_periodo, fk_turma, fk_nota, status FROM tdiario ORDER BY id";
 
 		try (Connection conn = Postgres.conectar();
 			 PreparedStatement ps = conn != null ? conn.prepareStatement(sql) : null) {
@@ -71,10 +92,19 @@ public class DaoDiario {
 				diario.setId(rs.getInt("id"));
 				diario.setStatus(rs.getBoolean("status"));
 				
-				// Carregar notas
-				List<model.Nota> notas = buscarNotasPorDiario(rs.getInt("id"));
-				diario.setNotas(notas);
+				// Carregar nota primária via fk_nota
+				int fkNota = rs.getInt("fk_nota");
+				List<model.Nota> notas = new ArrayList<>();
 				
+				if (fkNota > 0) {
+					DaoNota daoNota = new DaoNota();
+					model.Nota nota = daoNota.buscarPorId(fkNota);
+					if (nota != null) {
+						notas.add(nota);
+					}
+				}
+				
+				diario.setNotas(notas);
 				diarios.add(diario);
 			}
 		} catch (SQLException e) {
@@ -83,32 +113,8 @@ public class DaoDiario {
 		return diarios;
 	}
 
-	private List<model.Nota> buscarNotasPorDiario(int idDiario) {
-		List<model.Nota> notas = new ArrayList<>();
-		String sql = "SELECT id, nota FROM tnota WHERE id_diario = ?";
-
-		try (Connection conn = Postgres.conectar();
-			 PreparedStatement ps = conn != null ? conn.prepareStatement(sql) : null) {
-
-			if (ps == null) {
-				return notas;
-			}
-
-			ps.setInt(1, idDiario);
-			ResultSet rs = ps.executeQuery();
-			
-			while (rs.next()) {
-				model.Nota nota = new model.Nota(rs.getInt("id"), rs.getDouble("nota"));
-				notas.add(nota);
-			}
-		} catch (SQLException e) {
-			System.out.println("Erro ao buscar notas: " + e.getMessage());
-		}
-		return notas;
-	}
-
 	public boolean alterar(Diario diario, int idAluno, int idDisciplina, int idPeriodo, int idTurma) {
-		String sql = "UPDATE tdiario SET id_aluno = ?, id_disciplina = ?, id_periodo = ?, id_turma = ?, status = ? WHERE id = ?";
+		String sql = "UPDATE tdiario SET fk_aluno = ?, fk_disciplina = ?, fk_periodo = ?, fk_turma = ?, fk_nota = ?, status = ? WHERE id = ?";
 
 		try (Connection conn = Postgres.conectar();
 			 PreparedStatement ps = conn != null ? conn.prepareStatement(sql) : null) {
@@ -121,54 +127,65 @@ public class DaoDiario {
 			ps.setInt(2, idDisciplina);
 			ps.setInt(3, idPeriodo);
 			ps.setInt(4, idTurma);
-			ps.setBoolean(5, diario.isStatus());
-			ps.setInt(6, diario.getId());
+			
+			// Se houver notas, salvar a primeira e usar seu ID
+			Integer idNota = null;
+			if (diario.getNotas() != null && !diario.getNotas().isEmpty()) {
+				model.Nota primeiraNota = diario.getNotas().get(0);
+				DaoNota daoNota = new DaoNota();
+				if (daoNota.salvar(primeiraNota)) {
+					idNota = primeiraNota.getId();
+				}
+			}
+			
+			ps.setObject(5, idNota);
+			ps.setBoolean(6, diario.isStatus());
+			ps.setInt(7, diario.getId());
 
 			int linhasAfetadas = ps.executeUpdate();
 			
 			if (linhasAfetadas > 0) {
-				// Remover notas antigas e salvar novas via NotaController
-				notaController.excluirNotasPorDiario(diario.getId());
-				return notaController.salvarNotasPorDiario(diario.getId(), diario.getNotas());
+				// Salvar demais notas se existirem
+				if (diario.getNotas() != null && diario.getNotas().size() > 1) {
+					DaoNota daoNota = new DaoNota();
+					for (int i = 1; i < diario.getNotas().size(); i++) {
+						daoNota.salvar(diario.getNotas().get(i));
+					}
+				}
+				return true;
 			}
 		} catch (SQLException e) {
-			System.out.println("Erro ao alterar diário: " + e.getMessage());
+			System.err.println("Erro ao alterar diário: " + e.getMessage());
+			e.printStackTrace();
 		}
 		return false;
 	}
 
 	public boolean excluir(int id) {
-		try {
-			// Primeiro excluir notas via NotaController
-			if (!notaController.excluirNotasPorDiario(id)) {
+		String sql = "DELETE FROM tdiario WHERE id = ?";
+
+		try (Connection conn = Postgres.conectar();
+			 PreparedStatement ps = conn != null ? conn.prepareStatement(sql) : null) {
+
+			if (ps == null) {
 				return false;
 			}
-			
-			// Depois excluir diário
-			String sql = "DELETE FROM tdiario WHERE id = ?";
 
-			try (Connection conn = Postgres.conectar();
-				 PreparedStatement ps = conn != null ? conn.prepareStatement(sql) : null) {
-
-				if (ps == null) {
-					return false;
-				}
-
-				ps.setInt(1, id);
-				int linhasAfetadas = ps.executeUpdate();
-				return linhasAfetadas > 0;
-			}
+			ps.setInt(1, id);
+			int linhasAfetadas = ps.executeUpdate();
+			return linhasAfetadas > 0;
 		} catch (SQLException e) {
 			System.out.println("Erro ao excluir diário: " + e.getMessage());
+			e.printStackTrace();
 		}
 		return false;
 	}
 
 	public Diario pesquisarAluno(String nomeAluno, String nomeDisciplina) {
-		String sql = "SELECT d.id, d.id_aluno, d.id_disciplina, d.id_periodo, d.id_turma, d.status "
+		String sql = "SELECT d.id, d.fk_aluno, d.fk_disciplina, d.fk_periodo, d.fk_turma, d.fk_nota, d.status "
 				   + "FROM tdiario d "
-				   + "INNER JOIN taluno a ON d.id_aluno = a.id "
-				   + "INNER JOIN tdisciplina disc ON d.id_disciplina = disc.id "
+				   + "INNER JOIN taluno a ON d.fk_aluno = a.id "
+				   + "INNER JOIN tdisciplina disc ON d.fk_disciplina = disc.id "
 				   + "WHERE a.nome = ? AND disc.nome_disciplina = ? "
 				   + "LIMIT 1";
 
@@ -188,10 +205,19 @@ public class DaoDiario {
 				diario.setId(rs.getInt("id"));
 				diario.setStatus(rs.getBoolean("status"));
 				
-				// Carregar notas
-				List<model.Nota> notas = buscarNotasPorDiario(rs.getInt("id"));
-				diario.setNotas(notas);
+				// Carregar nota primária via fk_nota
+				int fkNota = rs.getInt("fk_nota");
+				List<model.Nota> notas = new ArrayList<>();
 				
+				if (fkNota > 0) {
+					DaoNota daoNota = new DaoNota();
+					model.Nota nota = daoNota.buscarPorId(fkNota);
+					if (nota != null) {
+						notas.add(nota);
+					}
+				}
+				
+				diario.setNotas(notas);
 				return diario;
 			}
 		} catch (SQLException e) {
