@@ -6,35 +6,42 @@ import dao.DaoPeriodo;
 import dao.DaoTurma;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import model.Aluno;
 import model.Disciplina;
-import model.Nota;
 import model.Periodo;
 import model.Turma;
 
 public class FormDiario extends JFrame {
 
-    private JToggleButton togStatus;
     private JComboBox<String> cmbAluno;
     private JComboBox<String> cmbPeriodo;
     private JComboBox<String> cmbTurma;
     private JComboBox<String> cmbDisciplina;
-    private JTable tabelaNotas;
-    private DefaultTableModel modeloTabela;
+    private JList<String> listNotas;
+    private DefaultListModel<String> modeloLista;
+    private JToggleButton togStatus;
     private JButton btnAdicionarNota;
     private JButton btnRemoverNota;
     private JButton btnSalvar;
     private JButton btnAlterar;
     private JButton btnExcluir;
     private JButton btnPesquisar;
-    private List<Nota> notas;
+    private List<Double> notas;
     private DaoAluno daoAluno;
     private DaoDisciplina daoDisciplina;
     private DaoPeriodo daoPeriodo;
     private DaoTurma daoTurma;
+    private HashMap<String, Integer> alunosMap;
+    private HashMap<String, Integer> disciplinasMap;
+    private HashMap<String, Integer> periodosMap;
+    private HashMap<String, Integer> turmasMap;
+    private String alunoSelecionado;
+    private String disciplinaSelecionada;
+    private String periodSelecionado;
+    private String turmaSelecionada;
 
     public FormDiario() {
         notas = new ArrayList<>();
@@ -42,8 +49,14 @@ public class FormDiario extends JFrame {
         daoDisciplina = new DaoDisciplina();
         daoPeriodo = new DaoPeriodo();
         daoTurma = new DaoTurma();
+        
+        alunosMap = new HashMap<>();
+        disciplinasMap = new HashMap<>();
+        periodosMap = new HashMap<>();
+        turmasMap = new HashMap<>();
+        
         setTitle("Diário de Notas");
-        setSize(700, 600);
+        setSize(500, 500);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
 
@@ -60,11 +73,10 @@ public class FormDiario extends JFrame {
         GridBagConstraints gbc = new GridBagConstraints();
 
         gbc.insets = new Insets(5, 5, 5, 5);
-        gbc.fill = GridBagConstraints.WEST;
-
-        //Campo Aluno
+        
+        // Aluno
         gbc.gridx = 0;
-        gbc.gridy = 1;
+        gbc.gridy = 0;
         gbc.fill = GridBagConstraints.NONE;
         gbc.weightx = 0;
         painelPrincipal.add(new JLabel("Aluno:"), gbc);
@@ -72,13 +84,13 @@ public class FormDiario extends JFrame {
         gbc.gridx = 1;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1;
-
         cmbAluno = new JComboBox<>();
+        cmbAluno.addActionListener(e -> atualizarSelecao());
         painelPrincipal.add(cmbAluno, gbc);
 
-        //Campo Período
+        // Período
         gbc.gridx = 0;
-        gbc.gridy = 2;
+        gbc.gridy = 1;
         gbc.fill = GridBagConstraints.NONE;
         gbc.weightx = 0;
         painelPrincipal.add(new JLabel("Período:"), gbc);
@@ -86,13 +98,13 @@ public class FormDiario extends JFrame {
         gbc.gridx = 1;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1;
-
         cmbPeriodo = new JComboBox<>();
+        cmbPeriodo.addActionListener(e -> atualizarSelecao());
         painelPrincipal.add(cmbPeriodo, gbc);
 
-        //Campo Turma
+        // Turma
         gbc.gridx = 0;
-        gbc.gridy = 3;
+        gbc.gridy = 2;
         gbc.fill = GridBagConstraints.NONE;
         gbc.weightx = 0;
         painelPrincipal.add(new JLabel("Turma:"), gbc);
@@ -100,13 +112,13 @@ public class FormDiario extends JFrame {
         gbc.gridx = 1;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1;
-
         cmbTurma = new JComboBox<>();
+        cmbTurma.addActionListener(e -> atualizarSelecao());
         painelPrincipal.add(cmbTurma, gbc);
 
-        //Campo Disciplina
+        // Disciplina
         gbc.gridx = 0;
-        gbc.gridy = 4;
+        gbc.gridy = 3;
         gbc.fill = GridBagConstraints.NONE;
         gbc.weightx = 0;
         painelPrincipal.add(new JLabel("Disciplina:"), gbc);
@@ -114,11 +126,17 @@ public class FormDiario extends JFrame {
         gbc.gridx = 1;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1;
-
         cmbDisciplina = new JComboBox<>();
+        cmbDisciplina.addActionListener(e -> atualizarSelecao());
         painelPrincipal.add(cmbDisciplina, gbc);
-
-        //Tabela de Notas
+        
+        
+        gbc.gridx = 0;
+        gbc.gridy = 4;
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.weightx = 0;
+        painelPrincipal.add(new JLabel("Notas:"), gbc);
+        
         gbc.gridx = 0;
         gbc.gridy = 5;
         gbc.gridwidth = 2;
@@ -126,65 +144,54 @@ public class FormDiario extends JFrame {
         gbc.weightx = 1;
         gbc.weighty = 1;
         
-        modeloTabela = new DefaultTableModel(new Object[][]{{}}, new Object[]{}) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
-        };
+        modeloLista = new DefaultListModel<>();
+        listNotas = new JList<>(modeloLista);
+        listNotas.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        listNotas.setFont(new Font("Arial", Font.PLAIN, 14));
         
-        tabelaNotas = new JTable(modeloTabela);
-        tabelaNotas.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        tabelaNotas.setRowHeight(30);
-        
-        JScrollPane scrollPane = new JScrollPane(tabelaNotas);
-        scrollPane.setPreferredSize(new Dimension(600, 80));
+        JScrollPane scrollPane = new JScrollPane(listNotas);
+        scrollPane.setPreferredSize(new Dimension(600, 150));
         painelPrincipal.add(scrollPane, gbc);
-
-        //Botões de gerenciamento de notas
+        
+        // ===== SEÇÃO 3: BOTÕES DE GERENCIAMENTO DE NOTAS =====
+        
         gbc.gridx = 0;
         gbc.gridy = 6;
         gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.weightx = 0;
         gbc.weighty = 0;
-
+        gbc.weightx = 1;
+        
         btnAdicionarNota = new JButton("Adicionar Nota");
         btnAdicionarNota.setPreferredSize(new Dimension(200, 40));
         btnAdicionarNota.setFont(new Font("Arial", Font.BOLD, 12));
         btnAdicionarNota.setBackground(new Color(70, 130, 180));
         btnAdicionarNota.setForeground(Color.WHITE);
         btnAdicionarNota.setFocusPainted(false);
-        //tornar o botão opaco e forçar a pintura do fundo
         btnAdicionarNota.setOpaque(true);
         btnAdicionarNota.setContentAreaFilled(true);
         btnAdicionarNota.setBorderPainted(false);
-        btnAdicionarNota.addActionListener(e -> new FormAdicionarNota(this));
+        btnAdicionarNota.addActionListener(e -> adicionarNota());
 
         btnRemoverNota = new JButton("Remover Nota");
         btnRemoverNota.setPreferredSize(new Dimension(200, 40));
-        btnRemoverNota.setFont(new Font("Arial", Font.BOLD, 12));
-        btnRemoverNota.setBackground(new Color(220, 20, 160));
+        btnRemoverNota.setFont(new Font("Arial", Font.BOLD, 11));
+        btnRemoverNota.setBackground(new Color(220, 20, 60));
         btnRemoverNota.setForeground(Color.WHITE);
         btnRemoverNota.setFocusPainted(false);
-        //tornar o botão opaco e forçar a pintura do fundo
         btnRemoverNota.setOpaque(true);
         btnRemoverNota.setContentAreaFilled(true);
         btnRemoverNota.setBorderPainted(false);
+        btnRemoverNota.addActionListener(e -> removerNota());
 
-        JPanel painelBotoesNotas = new JPanel(new FlowLayout());
+        JPanel painelBotoesNotas = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 5));
         painelBotoesNotas.add(btnAdicionarNota);
         painelBotoesNotas.add(btnRemoverNota);
-
+        
+        painelPrincipal.add(painelBotoesNotas, gbc);
+        
         gbc.gridx = 0;
         gbc.gridy = 7;
-        gbc.gridwidth = 2;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        painelPrincipal.add(painelBotoesNotas, gbc);
-
-        //Campo Status
-        gbc.gridx = 0;
-        gbc.gridy = 8;
         gbc.gridwidth = 1;
         gbc.weighty = 0;
         gbc.fill = GridBagConstraints.NONE;
@@ -199,10 +206,10 @@ public class FormDiario extends JFrame {
         togStatus.setSelected(true);
         atualizarTextoStatus();
         togStatus.addItemListener(e -> atualizarTextoStatus());
+        togStatus.setEnabled(false);
         painelPrincipal.add(togStatus, gbc);
 
-
-        //Painel de botões
+        
         JPanel painelBotoes = new JPanel(new FlowLayout());
 
         btnSalvar = new JButton("Salvar");
@@ -210,18 +217,10 @@ public class FormDiario extends JFrame {
         btnExcluir = new JButton("Excluir");
         btnPesquisar = new JButton("Pesquisar");
 
-        btnSalvar.addActionListener(e -> {
-        
-        });
-        btnAlterar.addActionListener(e -> {
-        
-        });
-        btnExcluir.addActionListener(e -> {
-        
-        });
-        btnPesquisar.addActionListener(e -> {
-
-        });
+        btnSalvar.addActionListener(e -> salvar());
+        btnAlterar.addActionListener(e -> alterar());
+        btnExcluir.addActionListener(e -> excluir());
+        btnPesquisar.addActionListener(e -> pesquisar());
 
         painelBotoes.add(btnSalvar);
         painelBotoes.add(btnAlterar);
@@ -229,31 +228,72 @@ public class FormDiario extends JFrame {
         painelBotoes.add(btnPesquisar);
 
         gbc.gridx = 0;
-        gbc.gridy = 9;
+        gbc.gridy = 8;
         gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         painelPrincipal.add(painelBotoes, gbc);
         
         add(painelPrincipal);
     }
-
-    public void adicionarNotaNaTabela(String nota) {
-        if (nota == null || nota.trim().isEmpty()) {
+    
+    private void atualizarSelecao() {
+        alunoSelecionado = (String) cmbAluno.getSelectedItem();
+        periodSelecionado = (String) cmbPeriodo.getSelectedItem();
+        turmaSelecionada = (String) cmbTurma.getSelectedItem();
+        disciplinaSelecionada = (String) cmbDisciplina.getSelectedItem();
+        
+        // Valida se algum está em "Selecione"
+        if (alunoSelecionado.startsWith("Selecione") ||
+            periodSelecionado.startsWith("Selecione") ||
+            turmaSelecionada.startsWith("Selecione") ||
+            disciplinaSelecionada.startsWith("Selecione")) {
+            
+            limparExibicao();
             return;
         }
-
-        int novaColuna = modeloTabela.getColumnCount();
-        String tituloColuna = "Nota " + (novaColuna + 1);
-        modeloTabela.addColumn(tituloColuna);
-
-        // Garante que há pelo menos uma linha
-        if (modeloTabela.getRowCount() == 0) {
-            modeloTabela.addRow(new Object[]{nota});
-        } else {
-            modeloTabela.setValueAt(nota, 0, novaColuna);
-        }
+        
+        notas.clear();
+        atualizarExibicao();
     }
 
+    private void atualizarExibicao() {
+        // Limpa lista
+        modeloLista.clear();
+        
+        // Adiciona notas na JList
+        for (int i = 0; i < notas.size(); i++) {
+            modeloLista.addElement(String.format("%.2f", notas.get(i)));
+        }
+        
+        // Atualiza status
+        if (notas.isEmpty()) {
+            togStatus.setSelected(true);
+            atualizarTextoStatus();
+        } else {
+            double media = calcularMedia();
+            togStatus.setSelected(media > 6);
+            atualizarTextoStatus();
+        }
+    }
+    
+    private void limparExibicao() {
+        notas.clear();
+        modeloLista.clear();
+        togStatus.setSelected(true);
+        atualizarTextoStatus();
+    }
+    
+    private double calcularMedia() {
+        if (notas.isEmpty()) return 0;
+        
+        double soma = 0;
+        for (Double nota : notas) {
+            soma += nota;
+        }
+        
+        return soma / notas.size();
+    }
+    
     private void atualizarTextoStatus() {
         if (togStatus.isSelected()) {
             togStatus.setText("Aprovado");
@@ -261,13 +301,32 @@ public class FormDiario extends JFrame {
             togStatus.setText("Reprovado");
         }
     }
+    
+    private void salvar() {
+
+    }
+    
+    private void alterar() {
+  
+    }
+    
+    private void excluir() {
+
+    }
+    
+    private void pesquisar() {
+
+    }
 
     private void carregarAlunos() {
         List<Aluno> alunos = daoAluno.listarTodos();
         cmbAluno.removeAllItems();
         cmbAluno.addItem("Selecione um Aluno");
+        
         for (Aluno aluno : alunos) {
-            cmbAluno.addItem(aluno.getNome());
+            String nome = aluno.getNome();
+            cmbAluno.addItem(nome);
+            alunosMap.put(nome, aluno.getId());
         }
     }
 
@@ -275,8 +334,11 @@ public class FormDiario extends JFrame {
         List<Disciplina> disciplinas = daoDisciplina.listarTodos();
         cmbDisciplina.removeAllItems();
         cmbDisciplina.addItem("Selecione uma disciplina");
+        
         for (Disciplina disciplina : disciplinas) {
-            cmbDisciplina.addItem(disciplina.getNome_disciplina());
+            String nome = disciplina.getNome_disciplina();
+            cmbDisciplina.addItem(nome);
+            disciplinasMap.put(nome, disciplina.getId());
         }
     }
 
@@ -284,8 +346,11 @@ public class FormDiario extends JFrame {
         List<Periodo> periodos = daoPeriodo.listarTodos();
         cmbPeriodo.removeAllItems();
         cmbPeriodo.addItem("Selecione um Período");
+        
         for (Periodo periodo : periodos) {
-            cmbPeriodo.addItem(periodo.getNome_periodo());
+            String nome = periodo.getNome_periodo();
+            cmbPeriodo.addItem(nome);
+            periodosMap.put(nome, periodo.getId());
         }
     }
 
@@ -293,8 +358,64 @@ public class FormDiario extends JFrame {
         List<Turma> turmas = daoTurma.listarTodos();
         cmbTurma.removeAllItems();
         cmbTurma.addItem("Selecione uma Turma");
+        
         for (Turma turma : turmas) {
-            cmbTurma.addItem(turma.getNome_turma());
+            String nome = turma.getNome_turma();
+            cmbTurma.addItem(nome);
+            turmasMap.put(nome, turma.getId());
         }
+    }
+
+    private void adicionarNota() {
+        String input = JOptionPane.showInputDialog(
+            this,
+            "Adicionar Nota",
+            JOptionPane.QUESTION_MESSAGE
+        );
+        
+        if (input == null) return;
+        
+        try {
+            double nota = Double.parseDouble(input.trim());
+            
+            if (nota < 0 || nota > 10) {
+                JOptionPane.showMessageDialog(
+                    this,
+                    "Nota deve estar entre 0 e 10",
+                    "Erro",
+                    JOptionPane.ERROR_MESSAGE
+                );
+                return;
+            }
+            
+            notas.add(nota);
+            atualizarExibicao();
+        
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(
+                this,
+                "Valor inválido! Digite um número",
+                "Erro",
+                JOptionPane.ERROR_MESSAGE
+            );
+        }
+    }
+
+    private void removerNota() {
+        int indiceSelecionado = listNotas.getSelectedIndex();
+        
+        if (indiceSelecionado == -1) {
+            JOptionPane.showMessageDialog(
+                this,
+                "Selecione uma nota para remover",
+                "Aviso",
+                JOptionPane.WARNING_MESSAGE
+            );
+            return;
+        }
+        
+        double notaRemovida = notas.remove(indiceSelecionado);
+        atualizarExibicao();
+    
     }
 }
