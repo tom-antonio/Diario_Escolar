@@ -504,9 +504,8 @@ public class FormDiario extends JFrame {
             return;
         }
         
-        double notaRemovida = notas.remove(indiceSelecionado);
+        notas.remove(indiceSelecionado);
         atualizarExibicao();
-    
     }
 
         private void atualizarSelecao() {
