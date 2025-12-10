@@ -4,6 +4,7 @@ public class Nota {
 
     private int id;
     private double nota;
+    
 
     public Nota() {
     }

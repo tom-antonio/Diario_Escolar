@@ -151,7 +151,7 @@ public class FormAluno extends JFrame {
             String nomeMae = txtNome_mae.getText().trim();
 
             String erro = alunoController.salvarAluno(nome, endereco, telefone, email, matricula, nomePai, nomeMae);
-
+            LOG.info("Skkkkkkk");
             if (erro == null) {
                 JOptionPane.showMessageDialog(this,
                         "Aluno salvo com sucesso!",
@@ -164,6 +164,7 @@ public class FormAluno extends JFrame {
                         "Erro de Validação",
                         JOptionPane.ERROR_MESSAGE);
             }
+            LOG.info("Finalizou o metodo de salvar aluno");
         });
         
         btnAlterar.addActionListener(e -> {

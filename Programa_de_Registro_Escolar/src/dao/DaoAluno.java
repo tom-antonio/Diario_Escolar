@@ -156,6 +156,7 @@ public class DaoAluno {
 
 	public Aluno buscarPorNome(String nome) {
 		LOG.info("Buscando aluno por nome: " + nome);
+		
 		String sql = "SELECT id, nome, endereco, telefone, email, matricula, nome_pai, nome_mae FROM taluno WHERE nome = ? LIMIT 1";
 
 		try (Connection conn = Postgres.conectar();
