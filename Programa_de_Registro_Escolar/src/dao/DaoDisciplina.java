@@ -106,7 +106,7 @@ public class DaoDisciplina {
 		return false;
 	}
 
-	public Disciplina Pesquisar(String nome) {
+	public Disciplina pesquisar(String nome) {
 		String sql = "SELECT id, nome_disciplina, id_professor FROM tdisciplina WHERE nome_disciplina = ? LIMIT 1";
 
 		try (Connection conn = Postgres.conectar();

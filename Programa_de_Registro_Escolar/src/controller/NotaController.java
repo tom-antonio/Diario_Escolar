@@ -2,39 +2,36 @@ package controller;
 
 import dao.DaoNota;
 import model.Nota;
-import view.FormNota;
 
 public class NotaController {
 
     private final DaoNota daoNota;
-    private FormNota formNota;
-
+    
     public NotaController() {
         this.daoNota = new DaoNota();
     }
 
-    public NotaController(FormNota formNota) {
-        this();
-        this.formNota = formNota;
+    public NotaController(DaoNota daoNota) {
+        this.daoNota = daoNota;
     }
 
-    public String salvarNota(String nota) {
-
-        if (nota == null || nota.isEmpty()) {
-            return "Nome do nota não pode estar vazio.";
-        }
-        if (Double.parseDouble(nota) < 0 || Double.parseDouble(nota) > 10) {
-            return "A nota deve estar entre 0 e 10.";
+    public boolean salvarNotasPorDiario(int idDiario, java.util.List<Nota> notas) {
+        if (idDiario <= 0) {
+            return false;
         }
 
-        Nota notaObj = new Nota();
-        notaObj.setNota(Double.parseDouble(nota));
-
-        boolean salvo = daoNota.salvar(notaObj);
-        if (!salvo) {
-            return "Erro ao salvar nota no banco de dados.";
+        if (notas == null || notas.isEmpty()) {
+            return true; // Sem notas para salvar
         }
 
-        return null;
+        return daoNota.salvarNotasPorDiario(idDiario, notas);
+    }
+
+    public boolean excluirNotasPorDiario(int idDiario) {
+        if (idDiario <= 0) {
+            return false;
+        }
+
+        return daoNota.excluirNotasPorDiario(idDiario);
     }
 }

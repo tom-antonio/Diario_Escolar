@@ -44,6 +44,7 @@ public class FormDiario extends JFrame {
     private String disciplinaSelecionada;
     private String periodSelecionado;
     private String turmaSelecionada;
+    private Integer idDiarioAtual;
 
     public FormDiario() {
         notas = new ArrayList<>();
@@ -268,6 +269,11 @@ public class FormDiario extends JFrame {
         notas.clear();
         modeloLista.clear();
         togStatus.setSelected(true);
+        idDiarioAtual = null;
+        cmbAluno.setSelectedIndex(0);
+        cmbDisciplina.setSelectedIndex(0);
+        cmbPeriodo.setSelectedIndex(0);
+        cmbTurma.setSelectedIndex(0);
         diarioController.atualizarTextoStatus(togStatus);
     }
     
@@ -276,19 +282,156 @@ public class FormDiario extends JFrame {
     }
     
     private void salvar() {
-
+        // Validar seleções
+        if (alunoSelecionado == null || alunoSelecionado.startsWith("Selecione")) {
+            JOptionPane.showMessageDialog(this, "Selecione um aluno.", "Erro", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        if (disciplinaSelecionada == null || disciplinaSelecionada.startsWith("Selecione")) {
+            JOptionPane.showMessageDialog(this, "Selecione uma disciplina.", "Erro", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        if (periodSelecionado == null || periodSelecionado.startsWith("Selecione")) {
+            JOptionPane.showMessageDialog(this, "Selecione um período.", "Erro", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        if (turmaSelecionada == null || turmaSelecionada.startsWith("Selecione")) {
+            JOptionPane.showMessageDialog(this, "Selecione uma turma.", "Erro", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        if (notas.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Adicione pelo menos uma nota.", "Erro", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        // Obter IDs
+        int idAluno = alunosMap.getOrDefault(alunoSelecionado, -1);
+        int idDisciplina = disciplinasMap.getOrDefault(disciplinaSelecionada, -1);
+        int idPeriodo = periodosMap.getOrDefault(periodSelecionado, -1);
+        int idTurma = turmasMap.getOrDefault(turmaSelecionada, -1);
+        boolean status = togStatus.isSelected();
+        
+        String erro = diarioController.salvarDiario(idAluno, idDisciplina, idPeriodo, idTurma, notas, status);
+        
+        if (erro == null) {
+            JOptionPane.showMessageDialog(this, "Diário salvo com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+            limparCampos();
+        } else {
+            JOptionPane.showMessageDialog(this, erro, "Erro de Validação", JOptionPane.ERROR_MESSAGE);
+        }
     }
     
     private void alterar() {
-  
+        if (idDiarioAtual == null) {
+            JOptionPane.showMessageDialog(this, "Selecione um diário para alterar.", "Erro", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        // Validar seleções
+        if (alunoSelecionado == null || alunoSelecionado.startsWith("Selecione")) {
+            JOptionPane.showMessageDialog(this, "Selecione um aluno.", "Erro", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        if (disciplinaSelecionada == null || disciplinaSelecionada.startsWith("Selecione")) {
+            JOptionPane.showMessageDialog(this, "Selecione uma disciplina.", "Erro", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        if (periodSelecionado == null || periodSelecionado.startsWith("Selecione")) {
+            JOptionPane.showMessageDialog(this, "Selecione um período.", "Erro", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        if (turmaSelecionada == null || turmaSelecionada.startsWith("Selecione")) {
+            JOptionPane.showMessageDialog(this, "Selecione uma turma.", "Erro", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        if (notas.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Adicione pelo menos uma nota.", "Erro", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        // Obter IDs
+        int idAluno = alunosMap.getOrDefault(alunoSelecionado, -1);
+        int idDisciplina = disciplinasMap.getOrDefault(disciplinaSelecionada, -1);
+        int idPeriodo = periodosMap.getOrDefault(periodSelecionado, -1);
+        int idTurma = turmasMap.getOrDefault(turmaSelecionada, -1);
+        boolean status = togStatus.isSelected();
+        
+        String erro = diarioController.alterarDiario(idDiarioAtual, idAluno, idDisciplina, idPeriodo, idTurma, notas, status);
+        
+        if (erro == null) {
+            JOptionPane.showMessageDialog(this, "Diário alterado com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+            limparCampos();
+        } else {
+            JOptionPane.showMessageDialog(this, erro, "Erro de Validação", JOptionPane.ERROR_MESSAGE);
+        }
     }
     
     private void excluir() {
-
+        if (idDiarioAtual == null) {
+            JOptionPane.showMessageDialog(this, "Selecione um diário para excluir.", "Erro", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        int confirmacao = JOptionPane.showConfirmDialog(this,
+                "Deseja realmente excluir este diário?",
+                "Confirmar Exclusão",
+                JOptionPane.YES_NO_OPTION);
+        
+        if (confirmacao == JOptionPane.YES_OPTION) {
+            String erro = diarioController.excluirDiario(idDiarioAtual);
+            
+            if (erro == null) {
+                JOptionPane.showMessageDialog(this, "Diário excluído com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+                limparCampos();
+            } else {
+                JOptionPane.showMessageDialog(this, erro, "Erro ao Excluir", JOptionPane.ERROR_MESSAGE);
+            }
+        }
     }
     
     private void pesquisar() {
+        String nomeAluno = JOptionPane.showInputDialog(this, "Digite o nome do aluno:", "Pesquisar", JOptionPane.QUESTION_MESSAGE);
+        
+        if (nomeAluno == null || nomeAluno.trim().isEmpty()) {
+            return;
+        }
+        
+        String nomeDisciplina = JOptionPane.showInputDialog(this, "Digite o nome da disciplina:", "Pesquisar", JOptionPane.QUESTION_MESSAGE);
+        
+        if (nomeDisciplina == null || nomeDisciplina.trim().isEmpty()) {
+            return;
+        }
+        
+        model.Diario diarioEncontrado = diarioController.pesquisarDiario(nomeAluno, nomeDisciplina);
+        
+        if (diarioEncontrado != null) {
+            // Preencher campos
+            cmbAluno.setSelectedItem(nomeAluno);
+            cmbDisciplina.setSelectedItem(nomeDisciplina);
+            
+            // Preencher notas
+            notas.clear();
+            for (model.Nota nota : diarioEncontrado.getNotas()) {
+                notas.add(nota.getNota());
+            }
+            
+            // Atualizar exibição
+            atualizarExibicao();
+            togStatus.setSelected(diarioEncontrado.isStatus());
+            
+            idDiarioAtual = diarioEncontrado.getId();
 
+        } else {
+            JOptionPane.showMessageDialog(this, "Diário não encontrado.", "Pesquisa", JOptionPane.INFORMATION_MESSAGE);
+        }
     }
 
     private void carregarAlunos() {

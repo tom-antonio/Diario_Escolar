@@ -84,6 +84,6 @@ public class DisciplinaController {
             return null;
         }
 
-        return daoDisciplina.Pesquisar(nome.trim());
+        return daoDisciplina.pesquisar(nome.trim());
     }
 }

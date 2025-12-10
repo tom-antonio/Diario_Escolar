@@ -13,7 +13,7 @@ public class Diario {
     private final List<Nota> notas;  // Composição: Notas pertencem exclusivamente ao Diário
 
     public Diario() {
-        this.notas = new ArrayList<>();  // Diário cria suas próprias notas
+        this.notas = new ArrayList<>();
     }
 
     public Diario(int id, boolean status, List<Aluno> aluno, List<Disciplina> disciplina, List<Periodo> periodo,

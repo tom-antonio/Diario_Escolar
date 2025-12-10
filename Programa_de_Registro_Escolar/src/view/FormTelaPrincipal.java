@@ -50,18 +50,9 @@ public class FormTelaPrincipal extends JFrame {
             }
         });
 
-        JMenuItem itemNota = new JMenuItem("Nota");
-        itemNota.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e){
-                abrirFormularioNota();
-            }
-        });
-
         menuCadastros.add(itemDisciplina);
         menuCadastros.add(itemPeriodo);
         menuCadastros.add(itemTurma);
-        menuCadastros.add(itemNota);
 
         JMenu menuAjuda = new JMenu("Ajuda");
         JMenuItem menuItemSobre = new JMenuItem("Sobre");
@@ -105,7 +96,7 @@ public class FormTelaPrincipal extends JFrame {
 
         //Intruções
         JLabel labelInstrucoes = new JLabel(
-            "<html><center>Use o menu 'Cadastros' para acessar:<br>• Cadastro de Disciplina<br>• Cadastro de Periodo<br>• Cadastro de Turma<br>• Cadastro de Nota</center></html>");
+            "<html><center>Use o menu 'Cadastros' para acessar:<br>• Cadastro de Disciplina<br>• Cadastro de Periodo<br>• Cadastro de Turma</center></html>");
         labelInstrucoes.setFont(new Font("Arial", Font.PLAIN, 14));
         labelInstrucoes.setForeground(new Color(100, 100, 100));
         gbc.gridy = 2;
@@ -204,8 +195,7 @@ public class FormTelaPrincipal extends JFrame {
             "• Cadastro de Professores\n" +
             "• Cadastro de Disciplinas\n" +
             "• Cadastro de Períodos\n" +
-            "• Cadastro de Turmas\n" +
-            "• Registro de Notas\n\n" +
+            "• Cadastro de Turmas\n\n" +
             "© 2025 - Sistema de Registro Escolar";
         JOptionPane.showMessageDialog(this, mensagem, "Sobre o Sistema", JOptionPane.INFORMATION_MESSAGE);
     }
@@ -266,16 +256,6 @@ public class FormTelaPrincipal extends JFrame {
             @Override
             public void run() {
                 new FormTurma();
-            }
-        });
-    }
-
-    private void abrirFormularioNota() {
-        //Cria nova instância do formulário de nota
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                new FormNota();
             }
         });
     }

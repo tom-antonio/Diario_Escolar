@@ -58,4 +58,47 @@ public class DaoNota {
 		}
 		return notas;
 	}
+
+	public boolean salvarNotasPorDiario(int idDiario, List<Nota> notas) {
+		String sql = "INSERT INTO tnota (id_diario, nota) VALUES (?, ?)";
+
+		try (Connection conn = Postgres.conectar();
+			 PreparedStatement ps = conn != null ? conn.prepareStatement(sql) : null) {
+
+			if (ps == null || notas == null || notas.isEmpty()) {
+				return true; // Sem notas para salvar
+			}
+
+			for (Nota nota : notas) {
+				ps.setInt(1, idDiario);
+				ps.setDouble(2, nota.getNota());
+				ps.addBatch();
+			}
+
+			ps.executeBatch();
+			return true;
+		} catch (SQLException e) {
+			System.out.println("Erro ao salvar notas: " + e.getMessage());
+		}
+		return false;
+	}
+
+	public boolean excluirNotasPorDiario(int idDiario) {
+		String sql = "DELETE FROM tnota WHERE id_diario = ?";
+
+		try (Connection conn = Postgres.conectar();
+			 PreparedStatement ps = conn != null ? conn.prepareStatement(sql) : null) {
+
+			if (ps == null) {
+				return false;
+			}
+
+			ps.setInt(1, idDiario);
+			ps.executeUpdate();
+			return true;
+		} catch (SQLException e) {
+			System.out.println("Erro ao excluir notas: " + e.getMessage());
+		}
+		return false;
+	}
 }
