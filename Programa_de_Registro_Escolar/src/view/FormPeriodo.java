@@ -12,6 +12,7 @@ public class FormPeriodo extends JFrame {
     private JButton btnExcluir;
     private JButton btnPesquisar;
     private PeriodoController periodoController;
+    private Integer idPeriodoAtual;
 
     public FormPeriodo() {
         setTitle("Cadastro de Período");
@@ -66,13 +67,69 @@ public class FormPeriodo extends JFrame {
         });
 
         btnAlterar.addActionListener(e -> {
-        
-        });
-        btnExcluir.addActionListener(e -> {
-        
-        });
-        btnPesquisar.addActionListener(e -> {
+            if (idPeriodoAtual == null) {
+                JOptionPane.showMessageDialog(this, "Nenhum período selecionado para alterar.", "Aviso", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
 
+            String nomePeriodo = txtNome_periodo.getText().trim();
+
+            String erro = periodoController.alterarPeriodo(idPeriodoAtual, nomePeriodo);
+
+            if (erro != null) {
+                JOptionPane.showMessageDialog(this, erro, "Erro", JOptionPane.ERROR_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, "Período alterado com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+                limparCampos();
+            }
+        });
+
+        btnExcluir.addActionListener(e -> {
+            if (idPeriodoAtual == null) {
+                JOptionPane.showMessageDialog(this, "Nenhum período selecionado para excluir.", "Aviso", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            int confirmacao = JOptionPane.showConfirmDialog(
+                this,
+                "Tem certeza que deseja excluir este período?",
+                "Confirmar Exclusão",
+                JOptionPane.YES_NO_OPTION
+            );
+
+            if (confirmacao != JOptionPane.YES_OPTION) {
+                return;
+            }
+
+            String erro = periodoController.excluirPeriodo(idPeriodoAtual);
+
+            if (erro != null) {
+                JOptionPane.showMessageDialog(this, erro, "Erro", JOptionPane.ERROR_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, "Período excluído com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+                limparCampos();
+            }
+        });
+
+        btnPesquisar.addActionListener(e -> {
+            String idTexto = JOptionPane.showInputDialog(this, "Digite o ID do período:", "Pesquisar", JOptionPane.QUESTION_MESSAGE);
+
+            if (idTexto == null || idTexto.trim().isEmpty()) {
+                return;
+            }
+
+            try {
+                int id = Integer.parseInt(idTexto.trim());
+                
+                model.Periodo periodo = periodoController.pesquisarPeriodo(id);
+
+                if (periodo == null) {
+                    JOptionPane.showMessageDialog(this, "Período não encontrado.", "Aviso", JOptionPane.WARNING_MESSAGE);
+                    limparCampos();
+                }
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(this, "ID inválido. Digite um número.", "Erro", JOptionPane.ERROR_MESSAGE);
+            }
         });
 
         painelBotoes.add(btnSalvar);
@@ -91,6 +148,7 @@ public class FormPeriodo extends JFrame {
 
     private void limparCampos() {
         txtNome_periodo.setText("");
+        idPeriodoAtual = null;
         txtNome_periodo.requestFocus();
     }
 }

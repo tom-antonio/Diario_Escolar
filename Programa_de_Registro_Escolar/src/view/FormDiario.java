@@ -13,6 +13,7 @@ import model.Aluno;
 import model.Disciplina;
 import model.Periodo;
 import model.Turma;
+import controller.DiarioController;
 
 public class FormDiario extends JFrame {
 
@@ -38,6 +39,7 @@ public class FormDiario extends JFrame {
     private HashMap<String, Integer> disciplinasMap;
     private HashMap<String, Integer> periodosMap;
     private HashMap<String, Integer> turmasMap;
+    private DiarioController diarioController;
     private String alunoSelecionado;
     private String disciplinaSelecionada;
     private String periodSelecionado;
@@ -49,6 +51,7 @@ public class FormDiario extends JFrame {
         daoDisciplina = new DaoDisciplina();
         daoPeriodo = new DaoPeriodo();
         daoTurma = new DaoTurma();
+        diarioController = new DiarioController();
         
         alunosMap = new HashMap<>();
         disciplinasMap = new HashMap<>();
@@ -130,7 +133,7 @@ public class FormDiario extends JFrame {
         cmbDisciplina.addActionListener(e -> atualizarSelecao());
         painelPrincipal.add(cmbDisciplina, gbc);
         
-        
+        // Notas
         gbc.gridx = 0;
         gbc.gridy = 4;
         gbc.fill = GridBagConstraints.NONE;
@@ -153,8 +156,7 @@ public class FormDiario extends JFrame {
         scrollPane.setPreferredSize(new Dimension(600, 150));
         painelPrincipal.add(scrollPane, gbc);
         
-        // ===== SEÇÃO 3: BOTÕES DE GERENCIAMENTO DE NOTAS =====
-        
+        // Botões de notas
         gbc.gridx = 0;
         gbc.gridy = 6;
         gbc.gridwidth = 2;
@@ -190,6 +192,7 @@ public class FormDiario extends JFrame {
         
         painelPrincipal.add(painelBotoesNotas, gbc);
         
+        // Status
         gbc.gridx = 0;
         gbc.gridy = 7;
         gbc.gridwidth = 1;
@@ -202,6 +205,7 @@ public class FormDiario extends JFrame {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1;
 
+        //Campo Aprovado/Reprovado
         togStatus = new JToggleButton();
         togStatus.setSelected(true);
         atualizarTextoStatus();
@@ -248,58 +252,27 @@ public class FormDiario extends JFrame {
             turmaSelecionada.startsWith("Selecione") ||
             disciplinaSelecionada.startsWith("Selecione")) {
             
-            limparExibicao();
+            limparCampos();
             return;
         }
-        
+
         notas.clear();
         atualizarExibicao();
     }
 
     private void atualizarExibicao() {
-        // Limpa lista
-        modeloLista.clear();
-        
-        // Adiciona notas na JList
-        for (int i = 0; i < notas.size(); i++) {
-            modeloLista.addElement(String.format("%.2f", notas.get(i)));
-        }
-        
-        // Atualiza status
-        if (notas.isEmpty()) {
-            togStatus.setSelected(true);
-            atualizarTextoStatus();
-        } else {
-            double media = calcularMedia();
-            togStatus.setSelected(media > 6);
-            atualizarTextoStatus();
-        }
+        diarioController.atualizarExibicao(notas, modeloLista, togStatus);
     }
     
-    private void limparExibicao() {
+    private void limparCampos() {
         notas.clear();
         modeloLista.clear();
         togStatus.setSelected(true);
-        atualizarTextoStatus();
-    }
-    
-    private double calcularMedia() {
-        if (notas.isEmpty()) return 0;
-        
-        double soma = 0;
-        for (Double nota : notas) {
-            soma += nota;
-        }
-        
-        return soma / notas.size();
+        diarioController.atualizarTextoStatus(togStatus);
     }
     
     private void atualizarTextoStatus() {
-        if (togStatus.isSelected()) {
-            togStatus.setText("Aprovado");
-        } else {
-            togStatus.setText("Reprovado");
-        }
+        diarioController.atualizarTextoStatus(togStatus);
     }
     
     private void salvar() {

@@ -34,4 +34,46 @@ public class PeriodoController {
 
         return null;
     }
+
+    public String alterarPeriodo(int id, String nomePeriodo) {
+        if (id <= 0) {
+            return "ID inválido.";
+        }
+
+        if (nomePeriodo == null || nomePeriodo.isEmpty()) {
+            return "Nome do período não pode estar vazio.";
+        }
+
+        Periodo periodo = new Periodo();
+        periodo.setId(id);
+        periodo.setNome_periodo(nomePeriodo);
+
+        boolean alterado = daoPeriodo.alterar(periodo);
+        if (!alterado) {
+            return "Erro ao alterar período no banco de dados.";
+        }
+
+        return null;
+    }
+
+    public String excluirPeriodo(int id) {
+        if (id <= 0) {
+            return "ID inválido.";
+        }
+
+        boolean excluido = daoPeriodo.excluir(id);
+        if (!excluido) {
+            return "Erro ao excluir período no banco de dados.";
+        }
+
+        return null;
+    }
+
+    public Periodo pesquisarPeriodo(int id) {
+        if (id <= 0) {
+            return null;
+        }
+
+        return daoPeriodo.buscarPorId(id);
+    }
 }

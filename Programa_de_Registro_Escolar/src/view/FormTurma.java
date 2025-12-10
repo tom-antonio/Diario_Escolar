@@ -12,6 +12,7 @@ public class FormTurma extends JFrame {
     private JButton btnExcluir;
     private JButton btnPesquisar;
     private TurmaController turmaController;
+    private Integer idTurmaAtual;
 
     public FormTurma() {
         setTitle("Cadastro de Turma");
@@ -65,13 +66,67 @@ public class FormTurma extends JFrame {
             }
         });
         btnAlterar.addActionListener(e -> {
-        
+            if (idTurmaAtual == null) {
+                JOptionPane.showMessageDialog(this, "Nenhuma turma selecionada para alterar.", "Aviso", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            String nomeTurma = txtNome_turma.getText().trim();
+
+            String erro = turmaController.alterarTurma(idTurmaAtual, nomeTurma);
+
+            if (erro != null) {
+                JOptionPane.showMessageDialog(this, erro, "Erro", JOptionPane.ERROR_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, "Turma alterada com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+                limparCampos();
+            }
         });
         btnExcluir.addActionListener(e -> {
-        
+            if (idTurmaAtual == null) {
+                JOptionPane.showMessageDialog(this, "Nenhuma turma selecionada para excluir.", "Aviso", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            int confirmacao = JOptionPane.showConfirmDialog(
+                this,
+                "Tem certeza que deseja excluir esta turma?",
+                "Confirmar Exclusão",
+                JOptionPane.YES_NO_OPTION
+            );
+
+            if (confirmacao != JOptionPane.YES_OPTION) {
+                return;
+            }
+
+            String erro = turmaController.excluirTurma(idTurmaAtual);
+
+            if (erro != null) {
+                JOptionPane.showMessageDialog(this, erro, "Erro", JOptionPane.ERROR_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, "Turma excluída com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+                limparCampos();
+            }
         });
         btnPesquisar.addActionListener(e -> {
+            String idTexto = JOptionPane.showInputDialog(this, "Digite o ID da turma:", "Pesquisar", JOptionPane.QUESTION_MESSAGE);
 
+            if (idTexto == null || idTexto.trim().isEmpty()) {
+                return;
+            }
+
+            try {
+                int id = Integer.parseInt(idTexto.trim());
+                
+                model.Turma turma = turmaController.pesquisarTurma(id);
+
+                if (turma == null) {
+                    JOptionPane.showMessageDialog(this, "Turma não encontrada.", "Aviso", JOptionPane.WARNING_MESSAGE);
+                    limparCampos();
+                }
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(this, "ID inválido. Digite um número.", "Erro", JOptionPane.ERROR_MESSAGE);
+            }
         });
 
         painelBotoes.add(btnSalvar);
@@ -90,6 +145,7 @@ public class FormTurma extends JFrame {
 
     private void limparCampos() {
         txtNome_turma.setText("");
+        idTurmaAtual = null;
         txtNome_turma.requestFocus();
     }
 }

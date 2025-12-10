@@ -58,4 +58,70 @@ public class DaoPeriodo {
 		}
 		return periodos;
 	}
+
+	public boolean alterar(Periodo periodo) {
+		String sql = "UPDATE tperiodo SET nome_periodo = ? WHERE id = ?";
+
+		try (Connection conn = Postgres.conectar();
+			 PreparedStatement ps = conn != null ? conn.prepareStatement(sql) : null) {
+
+			if (ps == null) {
+				return false;
+			}
+
+			ps.setString(1, periodo.getNome_periodo());
+			ps.setInt(2, periodo.getId());
+
+			int linhasAfetadas = ps.executeUpdate();
+			return linhasAfetadas > 0;
+		} catch (SQLException e) {
+			System.out.println("Erro ao alterar período: " + e.getMessage());
+		}
+		return false;
+	}
+
+	public boolean excluir(int id) {
+		String sql = "DELETE FROM tperiodo WHERE id = ?";
+
+		try (Connection conn = Postgres.conectar();
+			 PreparedStatement ps = conn != null ? conn.prepareStatement(sql) : null) {
+
+			if (ps == null) {
+				return false;
+			}
+
+			ps.setInt(1, id);
+
+			int linhasAfetadas = ps.executeUpdate();
+			return linhasAfetadas > 0;
+		} catch (SQLException e) {
+			System.out.println("Erro ao excluir período: " + e.getMessage());
+		}
+		return false;
+	}
+
+	public Periodo buscarPorId(int id) {
+		String sql = "SELECT id, nome_periodo FROM tperiodo WHERE id = ?";
+
+		try (Connection conn = Postgres.conectar();
+			 PreparedStatement ps = conn != null ? conn.prepareStatement(sql) : null) {
+
+			if (ps == null) {
+				return null;
+			}
+
+			ps.setInt(1, id);
+
+			ResultSet rs = ps.executeQuery();
+			if (rs.next()) {
+				return new Periodo(
+					rs.getInt("id"),
+					rs.getString("nome_periodo")
+				);
+			}
+		} catch (SQLException e) {
+			System.out.println("Erro ao buscar período: " + e.getMessage());
+		}
+		return null;
+	}
 }

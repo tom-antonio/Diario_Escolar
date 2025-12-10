@@ -68,4 +68,113 @@ public class DaoAluno {
 		}
 		return alunos;
 	}
+
+	public boolean alterar(Aluno aluno) {
+		String sql = "UPDATE taluno SET nome = ?, endereco = ?, telefone = ?, email = ?, matricula = ?, nome_pai = ?, nome_mae = ? WHERE id = ?";
+
+		try (Connection conn = Postgres.conectar();
+			 PreparedStatement ps = conn != null ? conn.prepareStatement(sql) : null) {
+
+			if (ps == null) {
+				return false;
+			}
+
+			ps.setString(1, aluno.getNome());
+			ps.setString(2, aluno.getEndereco());
+			ps.setString(3, aluno.getTelefone());
+			ps.setString(4, aluno.getEmail());
+			ps.setLong(5, aluno.getMatricula());
+			ps.setString(6, aluno.getNome_pai());
+			ps.setString(7, aluno.getNome_mae());
+			ps.setInt(8, aluno.getId());
+
+			int linhasAfetadas = ps.executeUpdate();
+			return linhasAfetadas > 0;
+		} catch (SQLException e) {
+			System.out.println("Erro ao alterar aluno: " + e.getMessage());
+		}
+		return false;
+	}
+
+	public boolean excluir(int id) {
+		String sql = "DELETE FROM taluno WHERE id = ?";
+
+		try (Connection conn = Postgres.conectar();
+			 PreparedStatement ps = conn != null ? conn.prepareStatement(sql) : null) {
+
+			if (ps == null) {
+				return false;
+			}
+
+			ps.setInt(1, id);
+
+			int linhasAfetadas = ps.executeUpdate();
+			return linhasAfetadas > 0;
+		} catch (SQLException e) {
+			System.out.println("Erro ao excluir aluno: " + e.getMessage());
+		}
+		return false;
+	}
+
+	public Aluno buscarPorId(int id) {
+		String sql = "SELECT id, nome, endereco, telefone, email, matricula, nome_pai, nome_mae FROM taluno WHERE id = ?";
+
+		try (Connection conn = Postgres.conectar();
+			 PreparedStatement ps = conn != null ? conn.prepareStatement(sql) : null) {
+
+			if (ps == null) {
+				return null;
+			}
+
+			ps.setInt(1, id);
+
+			ResultSet rs = ps.executeQuery();
+			if (rs.next()) {
+				return new Aluno(
+					rs.getInt("id"),
+					rs.getString("nome"),
+					rs.getString("endereco"),
+					rs.getString("telefone"),
+					rs.getString("email"),
+					rs.getLong("matricula"),
+					rs.getString("nome_pai"),
+					rs.getString("nome_mae")
+				);
+			}
+		} catch (SQLException e) {
+			System.out.println("Erro ao buscar aluno: " + e.getMessage());
+		}
+		return null;
+	}
+
+	public Aluno buscarPorNome(String nome) {
+		String sql = "SELECT id, nome, endereco, telefone, email, matricula, nome_pai, nome_mae FROM taluno WHERE nome = ? LIMIT 1";
+
+		try (Connection conn = Postgres.conectar();
+			 PreparedStatement ps = conn != null ? conn.prepareStatement(sql) : null) {
+
+			if (ps == null) {
+				return null;
+			}
+
+			ps.setString(1, nome);
+
+			ResultSet rs = ps.executeQuery();
+			if (rs.next()) {
+				return new Aluno(
+					rs.getInt("id"),
+					rs.getString("nome"),
+					rs.getString("endereco"),
+					rs.getString("telefone"),
+					rs.getString("email"),
+					rs.getLong("matricula"),
+					rs.getString("nome_pai"),
+					rs.getString("nome_mae")
+				);
+			}
+		} catch (SQLException e) {
+			System.out.println("Erro ao buscar aluno por nome: " + e.getMessage());
+		}
+		return null;
+	}
 }

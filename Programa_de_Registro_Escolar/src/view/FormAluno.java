@@ -18,6 +18,7 @@ public class FormAluno extends JFrame {
     private JButton btnExcluir;
     private JButton btnPesquisar;
     private AlunoController alunoController;
+    private Integer idAlunoAtual;
 
     public FormAluno() {
         alunoController = new AlunoController(this);
@@ -161,13 +162,76 @@ public class FormAluno extends JFrame {
             }
         });
         btnAlterar.addActionListener(e -> {
-        
+            if (idAlunoAtual == null) {
+                JOptionPane.showMessageDialog(this, "Nenhum aluno selecionado para alterar.", "Aviso", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            String nome = txtNome.getText().trim();
+            String endereco = txtEndereco.getText().trim();
+            String telefone = txtTelefone.getText().trim();
+            String email = txtEmail.getText().trim();
+            String matricula = txtMatricula.getText().trim();
+            String nomePai = txtNome_pai.getText().trim();
+            String nomeMae = txtNome_mae.getText().trim();
+
+            String erro = alunoController.alterarAluno(idAlunoAtual, nome, endereco, telefone, email, matricula, nomePai, nomeMae);
+
+            if (erro == null) {
+                JOptionPane.showMessageDialog(this, "Aluno alterado com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+                limparCampos();
+            } else {
+                JOptionPane.showMessageDialog(this, erro, "Erro", JOptionPane.ERROR_MESSAGE);
+            }
         });
         btnExcluir.addActionListener(e -> {
-        
+            if (idAlunoAtual == null) {
+                JOptionPane.showMessageDialog(this, "Nenhum aluno selecionado para excluir.", "Aviso", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            int confirmacao = JOptionPane.showConfirmDialog(
+                this,
+                "Tem certeza que deseja excluir este aluno?",
+                "Confirmar Exclusão",
+                JOptionPane.YES_NO_OPTION
+            );
+
+            if (confirmacao != JOptionPane.YES_OPTION) {
+                return;
+            }
+
+            String erro = alunoController.excluirAluno(idAlunoAtual);
+
+            if (erro == null) {
+                JOptionPane.showMessageDialog(this, "Aluno excluído com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+                limparCampos();
+            } else {
+                JOptionPane.showMessageDialog(this, erro, "Erro", JOptionPane.ERROR_MESSAGE);
+            }
         });
         btnPesquisar.addActionListener(e -> {
+            String nomeTexto = JOptionPane.showInputDialog(this, "Digite o nome do aluno:", "Pesquisar", JOptionPane.QUESTION_MESSAGE);
 
+            if (nomeTexto == null || nomeTexto.trim().isEmpty()) {
+                return;
+            }
+
+            model.Aluno aluno = alunoController.pesquisarAluno(nomeTexto.trim());
+
+            if (aluno == null) {
+                JOptionPane.showMessageDialog(this, "Aluno não encontrado.", "Aviso", JOptionPane.WARNING_MESSAGE);
+                limparCampos();
+            } else {
+                idAlunoAtual = aluno.getId();
+                txtNome.setText(aluno.getNome());
+                txtEndereco.setText(aluno.getEndereco());
+                txtTelefone.setText(aluno.getTelefone());
+                txtEmail.setText(aluno.getEmail());
+                txtMatricula.setText(String.valueOf(aluno.getMatricula()));
+                txtNome_pai.setText(aluno.getNome_pai());
+                txtNome_mae.setText(aluno.getNome_mae());
+            }
         });
 
         painelBotoes.add(btnSalvar);
@@ -192,6 +256,7 @@ public class FormAluno extends JFrame {
         txtMatricula.setText("");
         txtNome_pai.setText("");
         txtNome_mae.setText("");
+        idAlunoAtual = null;
         txtNome.requestFocus();
     }
 

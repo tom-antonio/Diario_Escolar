@@ -58,4 +58,70 @@ public class DaoTurma {
 		}
 		return turmas;
 	}
+
+	public boolean alterar(Turma turma) {
+		String sql = "UPDATE tturma SET nome_turma = ? WHERE id = ?";
+
+		try (Connection conn = Postgres.conectar();
+			 PreparedStatement ps = conn != null ? conn.prepareStatement(sql) : null) {
+
+			if (ps == null) {
+				return false;
+			}
+
+			ps.setString(1, turma.getNome_turma());
+			ps.setInt(2, turma.getId());
+
+			int linhasAfetadas = ps.executeUpdate();
+			return linhasAfetadas > 0;
+		} catch (SQLException e) {
+			System.out.println("Erro ao alterar turma: " + e.getMessage());
+		}
+		return false;
+	}
+
+	public boolean excluir(int id) {
+		String sql = "DELETE FROM tturma WHERE id = ?";
+
+		try (Connection conn = Postgres.conectar();
+			 PreparedStatement ps = conn != null ? conn.prepareStatement(sql) : null) {
+
+			if (ps == null) {
+				return false;
+			}
+
+			ps.setInt(1, id);
+
+			int linhasAfetadas = ps.executeUpdate();
+			return linhasAfetadas > 0;
+		} catch (SQLException e) {
+			System.out.println("Erro ao excluir turma: " + e.getMessage());
+		}
+		return false;
+	}
+
+	public Turma buscarPorId(int id) {
+		String sql = "SELECT id, nome_turma FROM tturma WHERE id = ?";
+
+		try (Connection conn = Postgres.conectar();
+			 PreparedStatement ps = conn != null ? conn.prepareStatement(sql) : null) {
+
+			if (ps == null) {
+				return null;
+			}
+
+			ps.setInt(1, id);
+
+			ResultSet rs = ps.executeQuery();
+			if (rs.next()) {
+				return new Turma(
+					rs.getInt("id"),
+					rs.getString("nome_turma")
+				);
+			}
+		} catch (SQLException e) {
+			System.out.println("Erro ao buscar turma: " + e.getMessage());
+		}
+		return null;
+	}
 }
